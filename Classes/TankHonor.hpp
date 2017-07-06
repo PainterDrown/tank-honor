@@ -43,4 +43,17 @@ private:
     Label *timeLabel, *scoreLabel, *info;
 };
 
+class Tank : public Sprite {
+public:
+    Tank(const int type);
+    void attack(Tank &other);
+
+private:
+    int type;
+    int health_value;    // 生命值
+    int attack_value;    // 攻击力
+    int defense_value;   // 防御力
+    int attack_range;    // 射程
+};
+
 #endif

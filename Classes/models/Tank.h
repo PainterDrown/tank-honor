@@ -1,13 +1,4 @@
-//
-//  Header.h
-//  
-//
-//  Created by PainterDrown on 7/6/17.
-//
-//
+#ifndef TANK
+#define TANK
 
-#ifndef Header_h
-#define Header_h
-
-
-#endif /* Header_h */
+#endif
