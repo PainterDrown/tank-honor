@@ -1,8 +1,13 @@
-/tank-honor/cocos2d/
-/tank-honor/proj.android/
-/tank-honor/proj.android-studio/
-/tank-honor/proj.ios_mac/
-/tank-honor/proj.linux/
-/tank-honor/proj.tizen/
-/tank-honor/proj.win10/
-/tank-honor/proj.win32/
+# dirs
+/cocos2d
+/proj.android
+/proj.android-studio
+/proj.ios_mac
+/proj.linux
+/proj.tizen
+/proj.win10
+/proj.win32
+
+# files
+.cocos-project.json
+CMakeLists.txt
