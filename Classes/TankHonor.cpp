@@ -164,27 +164,23 @@ void TankHonor::update(float dt) {
 			tempState = true;
 		}
 		else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
-			//(*i)->destroy();
+			(*i)->destroy();
 			(*i)->removeFromParentAndCleanup(true);
 			i = bullets.erase(i);
 			tempState = true;
 		}
 		for (int j = 0; j < 3; j++) {
-			//if (playerTeam1[j]->getContorl() == true) {
-
-			//}
-			//if (playerTeam2[j]->getContorl() == true) {
-
-			//}
+			playerTeam1[j]->AI();
+			playerTeam2[j]->AI();
 			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
 			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
 			if (dis1 < 30 || dis2 < 30) {
-				//(*i)->hit();
+				(*i)->hit();
 				(*i)->removeFromParentAndCleanup(true);
 				i = bullets.erase(i);
 				tempState = true;
-				//if (dis1 < 30) { playerTeam1[j]->hurt(); }
-				//else if (dis2 < 30) { playerTeam2[j]->hurt(); }
+				if (dis1 < 30) { playerTeam1[j]->hurt(); }
+				else if (dis2 < 30) { playerTeam2[j]->hurt(); }
 			}
 		}
 		if (tempState == false) {
@@ -284,41 +280,7 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
-    /*unschedule(schedule_selector(FriendShip::boxFall));
-    unschedule(schedule_selector(FriendShip::update));
-    SimpleAudioEngine::getInstance()->stopBackgroundMusic("bgm.mp3");
-    SimpleAudioEngine::getInstance()->playEffect("gameover.mp3", false);
     
-    auto label1 = Label::createWithTTF("单身狗，时间说没就没", "fonts/STXINWEI.TTF", 60);
-    label1->setColor(Color3B(0, 0, 0));
-    label1->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 100);
-    this->addChild(label1);
-    
-    auto label2 = Label::createWithTTF("重玩", "fonts/STXINWEI.TTF", 40);
-    label2->setColor(Color3B(0, 0, 0));
-    auto replayBtn = MenuItemLabel::create(label2, CC_CALLBACK_1(FriendShip::replayCallback, this));
-    Menu* replay = Menu::create(replayBtn, NULL);
-    replay->setPosition(visibleSize.width / 2 - 200, visibleSize.height / 2);
-    this->addChild(replay);
-    
-    auto label3 = Label::createWithTTF("退出", "fonts/STXINWEI.TTF", 40);
-    label3->setColor(Color3B(0, 0, 0));
-    auto exitBtn = MenuItemLabel::create(label3, CC_CALLBACK_1(FriendShip::exitCallback, this));
-    Menu* exit = Menu::create(exitBtn, NULL);
-    exit->setPosition(visibleSize.width / 2 + 200, visibleSize.height / 2);
-    this->addChild(exit);
-    
-    auto submitLabel = Label::createWithTTF("提交分数", "fonts/STXINWEI.TTF", 22);
-    auto submitBtn = MenuItemLabel::create(submitLabel, CC_CALLBACK_1(FriendShip::submitScore, this));
-    Menu* submitMenu = Menu::create(submitBtn, NULL);
-    submitMenu->setPosition(visibleSize.width / 2 - 90, visibleSize.height / 3);
-    this->addChild(submitMenu);
-    
-    auto rankLabel = Label::createWithTTF("查看排名", "fonts/STXINWEI.TTF", 22);
-    auto rankBtn = MenuItemLabel::create(rankLabel, CC_CALLBACK_1(FriendShip::seeRanking, this));
-    Menu* rankMenu = Menu::create(rankBtn, NULL);
-    rankMenu->setPosition(visibleSize.width / 2 + 90, visibleSize.height / 3);
-    this->addChild(rankMenu);*/
 }
 
 void TankHonor::addSchedulers() {
@@ -335,13 +297,13 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 	auto nowPos = tank->getPosition();
 	cocos2d::MoveTo* moveToAction = NULL;
 	cocos2d::RotateBy* rotateAction = NULL;
-	// 前后移动
+	 //前后移动
 	if (isMove) {
 		switch (moveKey) {
 		case 'W':
 			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() + 10 * sin(player->getRotation() + 90),
-				player->getPositionY() + 10 * cos(player->getRotation() + 90)));
+				player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
+				player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
 			rotateAction = RotateBy::create(0.1f, 0);
 			if (isRotate) {
 				switch (rotateKey) {
@@ -360,23 +322,31 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 			break;
 		case 'S':
 			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() + 10 * sin(player->getRotation()),
-				player->getPositionY() + 10 * cos(player->getRotation())));
+				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
+				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
 			rotateAction = RotateBy::create(0.1f, 0);
 			if (isRotate) {
 				switch (rotateKey) {
 				case 'D':
-					rotateAction = RotateBy::create(0.1f, 5);
+					rotateAction = RotateBy::create(0.1f, 10);
+					moveToAction = MoveTo::create(0.1f, Vec2(
+						player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(100)),
+						player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(100))));
 					break;
 				case 'A':
-					rotateAction = RotateBy::create(0.1f, -5);
+					rotateAction = RotateBy::create(0.1f, -10);
+					moveToAction = MoveTo::create(0.1f, Vec2(
+						player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(80)),
+						player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(80))));
 					break;
 				}
 			}
 			player->runAction(Sequence::create(Spawn::create(rotateAction, moveToAction), nullptr));
+
 			break;
 		}
 	}
+
 }
 
 void TankHonor::removeSchedulers() {
