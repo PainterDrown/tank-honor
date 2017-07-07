@@ -179,7 +179,6 @@ public:
     }
     
     void fly() {
-        addChild(cocos2d::Node *child);
     }
     
 private:
@@ -204,6 +203,8 @@ public:
     void removeSchedulers();  // 移除调度器
     
     void update(float dt);  // 定时更新到函数
+	void moveUpdate(float dt);  // 定时更新移动函数
+	void moveTank(char moveKey, char rotateKey, Tank* player);  // 移动函数
     
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
@@ -223,6 +224,12 @@ private:
     SpriteFrame* frame1;
     SpriteFrame* frame2;
 
+	// 辅助信息
+	bool isMove;    // 判断是否运动
+	bool isRotate;  // 判断是否旋转
+	char moveKey;   // 按键判断
+	char rotateKey; // 旋转按键判断
+
 	//玩家队伍和子弹
 	vector<Tank*> playerTeam1;
 	vector<Tank*> playerTeam2;
@@ -232,7 +239,4 @@ private:
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
 };
-
-
-
 #endif
