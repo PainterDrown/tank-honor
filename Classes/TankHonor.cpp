@@ -273,16 +273,20 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 		//}
 		switch (moveKey)
 		{
+			float value;
+			float value2;
 		case 'W':
+			value = CC_RADIANS_TO_DEGREES(player->getRotation());
+			value2 = player->getRotation();
 			moveToAction =  MoveTo::create(0.1f, Vec2(
-						player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
-						player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
+						player->getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90)),
+						player->getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90))));
 			player->runAction(moveToAction);
 			break;
 		case 'S':
 			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
-				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
+				player->getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90)),
+				player->getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90))));
 			player->runAction(moveToAction);
 			break;
 		}
@@ -293,13 +297,11 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 		case 'A':
 			value = CC_RADIANS_TO_DEGREES(player->getRotation());
 			value2 = player->getRotation();
-			rotateAction = RotateBy::create(0.1f, CC_DEGREES_TO_RADIANS(-10));
+			rotateAction = RotateBy::create(0.1f, (-10));
 			player->runAction(rotateAction);
-			value = CC_RADIANS_TO_DEGREES(player->getRotation());
-			value2 = player->getRotation();
 			break;
 		case 'D':
-			rotateAction = RotateBy::create(0.1f, CC_DEGREES_TO_RADIANS(10));
+			rotateAction = RotateBy::create(0.1f, (10));
 			player->runAction(rotateAction);
 			break;
 		}
