@@ -29,7 +29,6 @@ bool TankHonor::init() {
 
     schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.1f);
     
-    // schedule(schedule_selector(TankHonor::update), 0.01f, kRepeatForever, 0.1f);
     return true;
 }
 
@@ -68,125 +67,48 @@ void TankHonor::addListeners() {
 }
 
 void TankHonor::loadAnimation(string filepath) {
-    /*Vector<SpriteFrame*> PlayerIdleWithBox;
-    Vector<SpriteFrame*> PlayerIdleWithoutBox;
-    Vector<SpriteFrame*> PlayerPutUp;
-    Vector<SpriteFrame*> PlayerPutDown;
-    Vector<SpriteFrame*> PlayerRunWithBox;
-    Vector<SpriteFrame*> PlayerRunWithoutBox;
-    Vector<SpriteFrame*> PlayerJumpWithBox;
-    Vector<SpriteFrame*> PlayerJumpWithoutBox;
     
-    auto PlayerImage = Director::getInstance()->getTextureCache()->addImage(filepath + ".png");
-    
-    PlayerIdleWithoutBox.reserve(3);
-    for (int i = 0; i < 3; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(32 * i, 5, 32, 36)));
-        PlayerIdleWithoutBox.pushBack(frame);
-    }
-    Animation* PlayerIdelWithoutBoxAnimation = Animation::createWithSpriteFrames(PlayerIdleWithoutBox, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerIdelWithoutBoxAnimation, filepath + "IdleWithoutBoxAnimation");
-    
-    PlayerIdleWithBox.reserve(3);
-    auto IdleWithBox = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(96, 7, 32, 36)));
-    PlayerIdleWithBox.pushBack(IdleWithBox);
-    if (filepath == "player1")
-        IdleWithBox1 = IdleWithBox;
-    else IdleWithBox2 = IdleWithBox;
-    for (int i = 1; i < 3; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(96 + 32 * i, 7, 32, 33)));
-        PlayerIdleWithBox.pushBack(frame);
-    }
-    Animation* PlayerIdleWithBoxAnimation = Animation::createWithSpriteFrames(PlayerIdleWithBox, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerIdleWithBoxAnimation, filepath + "IdleWithBoxAnimation");
-    
-    for (int i = 0; i < 3; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(96 + 32 * i, 4, 32, 36)));
-        PlayerPutUp.pushBack(frame);
-    }
-    Animation* PlayerPutUpAnimation = Animation::createWithSpriteFrames(PlayerPutUp, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerPutUpAnimation, filepath + "PutUpAnimation");
-    
-    for (int i = 0; i < 2; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(193 + 32 * i, 4, 32, 36)));
-        PlayerPutDown.pushBack(frame);
-    }
-    if (filepath == "player1")
-        PlayerPutDown.pushBack(frame1);
-    else
-        PlayerPutDown.pushBack(frame2);
-    Animation* PlayerPutDownAnimation = Animation::createWithSpriteFrames(PlayerPutDown, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerPutDownAnimation, filepath + "PutDownAnimation");
-    
-    PlayerRunWithoutBox.reserve(8);
-    for (int i = 0; i < 8; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(32 * i, 41, 32, 36)));
-        PlayerRunWithoutBox.pushBack(frame);
-    }
-    Animation* PlayerRunWithoutBoxAnimation = Animation::createWithSpriteFrames(PlayerRunWithoutBox, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerRunWithoutBoxAnimation, filepath + "RunWithoutBoxAnimation");
-    
-    PlayerRunWithBox.reserve(8);
-    for (int i = 0; i < 8; i++) {
-        auto frame = SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(32 * i, 81, 32, 36)));
-        PlayerRunWithBox.pushBack(frame);
-    }
-    Animation* PlayerRunWithBoxAnimation = Animation::createWithSpriteFrames(PlayerRunWithBox, 0.1f);
-    AnimationCache::getInstance()->addAnimation(PlayerRunWithBoxAnimation, filepath + "RunWithBoxAnimation");
-    
-    PlayerJumpWithoutBox.pushBack(SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(64, 41, 32, 36))));
-    if (filepath == "player1")
-        PlayerJumpWithoutBox.pushBack(frame1);
-    else
-        PlayerJumpWithoutBox.pushBack(frame2);
-    Animation* PlayerJumpWithoutBoxAnimation = Animation::createWithSpriteFrames(PlayerJumpWithoutBox, 1.0f);
-    AnimationCache::getInstance()->addAnimation(PlayerJumpWithoutBoxAnimation, filepath + "JumpWithoutBoxAnimation");
-    
-    PlayerJumpWithBox.pushBack(SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(64, 81, 32, 36))));
-    PlayerJumpWithBox.pushBack(IdleWithBox);
-    Animation* PlayerJumpWithBoxAnimation = Animation::createWithSpriteFrames(PlayerJumpWithBox, 1.0);
-    AnimationCache::getInstance()->addAnimation(PlayerJumpWithBoxAnimation, filepath + "JumpWithBoxAnimation");*/
 }
 
 void TankHonor::update(float dt) {
-	//1.判断子弹是否发射，若没有发射，调用fly函数
-	//2.判断子弹是否出界
-	//3.判断子弹是否撞到墙壁或是坦克
-	//移动子弹，并且判断子弹是否移出地图
-	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
-		bool tempState = false;
-		if ((*i)->getState() == WAITING) {
-			(*i)->fly();
-		}
-		if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
-			(*i)->removeFromParentAndCleanup(true);
-			i = bullets.erase(i);
-			tempState = true;
-		}
-		else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
-			(*i)->destroy();
-			(*i)->removeFromParentAndCleanup(true);
-			i = bullets.erase(i);
-			tempState = true;
-		}
-		for (int j = 0; j < 3; j++) {
-			playerTeam1[j]->AI();
-			playerTeam2[j]->AI();
-			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
-			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
-			if (dis1 < 30 || dis2 < 30) {
-				(*i)->hit();
-				(*i)->removeFromParentAndCleanup(true);
-				i = bullets.erase(i);
-				tempState = true;
-				if (dis1 < 30) { playerTeam1[j]->hurt(); }
-				else if (dis2 < 30) { playerTeam2[j]->hurt(); }
-			}
-		}
-		if (tempState == false) {
-			++i;
-		}
-	}
+	////1.判断子弹是否发射，若没有发射，调用fly函数
+	////2.判断子弹是否出界
+	////3.判断子弹是否撞到墙壁或是坦克
+	////移动子弹，并且判断子弹是否移出地图
+	//for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+	//	bool tempState = false;
+	//	if ((*i)->getState() == WAITING) {
+	//		(*i)->fly();
+	//	}
+	//	if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
+	//		(*i)->removeFromParentAndCleanup(true);
+	//		i = bullets.erase(i);
+	//		tempState = true;
+	//	}
+	//	else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
+	//		(*i)->destroy();
+	//		(*i)->removeFromParentAndCleanup(true);
+	//		i = bullets.erase(i);
+	//		tempState = true;
+	//	}
+	//	for (int j = 0; j < 3; j++) {
+	//		playerTeam1[j]->AI();
+	//		playerTeam2[j]->AI();
+	//		int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
+	//		int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
+	//		if (dis1 < 30 || dis2 < 30) {
+	//			(*i)->hit();
+	//			(*i)->removeFromParentAndCleanup(true);
+	//			i = bullets.erase(i);
+	//			tempState = true;
+	//			if (dis1 < 30) { playerTeam1[j]->hurt(); }
+	//			else if (dis2 < 30) { playerTeam2[j]->hurt(); }
+	//		}
+	//	}
+	//	if (tempState == false) {
+	//		++i;
+	//	}
+	//}
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -264,15 +186,19 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
     switch (code) {
 		case cocos2d::EventKeyboard::KeyCode::KEY_W:
+			moveKey = ' ';
 			isMove = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_S:
+			moveKey = ' ';
 			isMove = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_D:
+			rotateKey = ' ';
 			isRotate = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_A:
+			rotateKey = ' ';
 			isRotate = false;
 			break;
         default:;
@@ -298,51 +224,83 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 	cocos2d::MoveTo* moveToAction = NULL;
 	cocos2d::RotateBy* rotateAction = NULL;
 	 //前后移动
-	if (isMove) {
-		switch (moveKey) {
+	if (isMove || isRotate) {
+		//switch (moveKey) {
+		//case 'W':
+		//	moveToAction = MoveTo::create(0.1f, Vec2(
+		//		player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
+		//		player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
+		//	rotateAction = RotateBy::create(0.1f, 0);
+		//	if (isRotate) {
+		//		switch (rotateKey) {
+		//		case 'D':
+		//			/*moveToAction = MoveTo::create(0.1f, Vec2(
+		//				player1->getPositionX() + 
+		//			))
+		//			rotateAction = RotateBy::create(0.1f, 5);*/
+		//			break;
+		//		case 'A':
+		//			rotateAction = RotateBy::create(0.1f, -5);
+		//			break;
+		//		}
+		//	}
+		//	player->runAction(Sequence::create(rotateAction, moveToAction, NULL));
+		//	break;
+		//case 'S':
+		//	moveToAction = MoveTo::create(0.1f, Vec2(
+		//		player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
+		//		player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
+		//	rotateAction = RotateBy::create(0.1f, 0);
+		//	if (isRotate) {
+		//		switch (rotateKey) {
+		//		case 'D':
+		//			rotateAction = RotateBy::create(0.1f, 10);
+		//			moveToAction = MoveTo::create(0.1f, Vec2(
+		//				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(100)),
+		//				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(100))));
+		//			break;
+		//		case 'A':
+		//			rotateAction = RotateBy::create(0.1f, -10);
+		//			moveToAction = MoveTo::create(0.1f, Vec2(
+		//				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(80)),
+		//				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(80))));
+		//			break;
+		//		}
+		//	}
+		//	player->runAction(Sequence::create(Spawn::create(rotateAction, moveToAction), nullptr));
+
+		//	break;
+		//}
+		switch (moveKey)
+		{
 		case 'W':
-			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
-				player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
-			rotateAction = RotateBy::create(0.1f, 0);
-			if (isRotate) {
-				switch (rotateKey) {
-				case 'D':
-					/*moveToAction = MoveTo::create(0.1f, Vec2(
-						player1->getPositionX() + 
-					))
-					rotateAction = RotateBy::create(0.1f, 5);*/
-					break;
-				case 'A':
-					rotateAction = RotateBy::create(0.1f, -5);
-					break;
-				}
-			}
-			player->runAction(Sequence::create(rotateAction, moveToAction, NULL));
+			moveToAction =  MoveTo::create(0.1f, Vec2(
+						player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
+						player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
+			player->runAction(moveToAction);
 			break;
 		case 'S':
 			moveToAction = MoveTo::create(0.1f, Vec2(
 				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
 				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
-			rotateAction = RotateBy::create(0.1f, 0);
-			if (isRotate) {
-				switch (rotateKey) {
-				case 'D':
-					rotateAction = RotateBy::create(0.1f, 10);
-					moveToAction = MoveTo::create(0.1f, Vec2(
-						player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(100)),
-						player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(100))));
-					break;
-				case 'A':
-					rotateAction = RotateBy::create(0.1f, -10);
-					moveToAction = MoveTo::create(0.1f, Vec2(
-						player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(80)),
-						player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(80))));
-					break;
-				}
-			}
-			player->runAction(Sequence::create(Spawn::create(rotateAction, moveToAction), nullptr));
-
+			player->runAction(moveToAction);
+			break;
+		}
+		switch (rotateKey)
+		{
+			float value;
+			float value2;
+		case 'A':
+			value = CC_RADIANS_TO_DEGREES(player->getRotation());
+			value2 = player->getRotation();
+			rotateAction = RotateBy::create(0.1f, CC_DEGREES_TO_RADIANS(-10));
+			player->runAction(rotateAction);
+			value = CC_RADIANS_TO_DEGREES(player->getRotation());
+			value2 = player->getRotation();
+			break;
+		case 'D':
+			rotateAction = RotateBy::create(0.1f, CC_DEGREES_TO_RADIANS(10));
+			player->runAction(rotateAction);
 			break;
 		}
 	}
