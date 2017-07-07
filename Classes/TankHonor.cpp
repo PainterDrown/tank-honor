@@ -191,10 +191,6 @@ void TankHonor::update(float dt) {
 			++i;
 		}
 	}
-
-
-		}
-	}
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
