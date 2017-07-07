@@ -1,17 +1,14 @@
 #include "TankHonor.hpp"
 
 Scene* TankHonor::createScene() {
-    // 'scene' is an autorelease object
     auto scene = Scene::create();
-    
-    // 'layer' is an autorelease object
-    auto layer = TankHonor::create();
-    
-    // add layer as a child to scene
+    layer = TankHonor::create();
     scene->addChild(layer);
-    
-    // return the scene
     return scene;
+}
+
+TankHonor* TankHonor::getInstance() {
+    return layer;
 }
 
 bool TankHonor::init() {
