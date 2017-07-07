@@ -1,5 +1,7 @@
 #include "TankHonor.hpp"
 
+TankHonor *TankHonor::layer = NULL;
+
 Scene* TankHonor::createScene() {
     auto scene = Scene::create();
     layer = TankHonor::create();
@@ -36,8 +38,9 @@ void TankHonor::addSprites() {
 	this->addChild(bg, 0);
 
 	// 添加坦克精灵
-	player1 = new Tank();
+	player1 = Tank::create();
 	player1->setPosition(Vec2(50, visibleSize.height / 2));
+	//player1->setAnchorPoint(Vec2(player1->getContentSize().width, player1->getContentSize().height / 2));
 	this->addChild(player1, 2);
 }
 
@@ -161,19 +164,19 @@ void TankHonor::update(float dt) {
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
     switch (code) {
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
+		case cocos2d::EventKeyboard::KeyCode::KEY_W:
 			isMove = true;
 			moveKey = 'W';
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
+		case cocos2d::EventKeyboard::KeyCode::KEY_S:
 			isMove = true;
 			moveKey = 'S';
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
+		case cocos2d::EventKeyboard::KeyCode::KEY_D:
 			isRotate = true;
 			rotateKey = 'D';
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
+		case cocos2d::EventKeyboard::KeyCode::KEY_A:
 			isRotate = true;
 			rotateKey = 'A';
 			break;
@@ -233,16 +236,16 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 
 void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
     switch (code) {
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
+		case cocos2d::EventKeyboard::KeyCode::KEY_W:
 			isMove = false;
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
+		case cocos2d::EventKeyboard::KeyCode::KEY_S:
 			isMove = false;
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
+		case cocos2d::EventKeyboard::KeyCode::KEY_D:
 			isRotate = false;
 			break;
-		case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
+		case cocos2d::EventKeyboard::KeyCode::KEY_A:
 			isRotate = false;
 			break;
         default:;
@@ -299,35 +302,47 @@ void TankHonor::moveUpdate(float dt) {
 void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 	auto tank = player;
 	auto nowPos = tank->getPosition();
-
+	cocos2d::MoveTo* moveToAction = NULL;
+	cocos2d::RotateBy* rotateAction = NULL;
 	// 前后移动
 	if (isMove) {
 		switch (moveKey) {
 		case 'W':
-			player->runAction(
-				MoveTo::create(0.1f, Vec2(
-					player->getPositionX() + 5 * sin(player->getRotation()),
-					player->getPositionY() + 5 * cos(player->getRotation()))));
+			moveToAction = MoveTo::create(0.1f, Vec2(
+				player->getPositionX() + 10 * sin(player->getRotation() + 90),
+				player->getPositionY() + 10 * cos(player->getRotation() + 90)));
+			rotateAction = RotateBy::create(0.1f, 0);
+			if (isRotate) {
+				switch (rotateKey) {
+				case 'D':
+					/*moveToAction = MoveTo::create(0.1f, Vec2(
+						player1->getPositionX() + 
+					))
+					rotateAction = RotateBy::create(0.1f, 5);*/
+					break;
+				case 'A':
+					rotateAction = RotateBy::create(0.1f, -5);
+					break;
+				}
+			}
+			player->runAction(Sequence::create(rotateAction, moveToAction, NULL));
 			break;
 		case 'S':
-			player->runAction(
-				MoveTo::create(0.1f, Vec2(
-					player->getPositionX() - 5 * sin(player->getRotation()),
-					player->getPositionY() - 5 * cos(player->getRotation()))));
-			break;
-		}
-	}
-	
-	// 方向转动
-	if (isRotate) {
-		switch (rotateKey) {
-		case 'D':
-			player->runAction(
-				RotateBy::create(0.1f, 10));
-			break;
-		case 'A':
-			player->runAction(
-				RotateBy::create(0.1f, -10));
+			moveToAction = MoveTo::create(0.1f, Vec2(
+				player->getPositionX() + 10 * sin(player->getRotation()),
+				player->getPositionY() + 10 * cos(player->getRotation())));
+			rotateAction = RotateBy::create(0.1f, 0);
+			if (isRotate) {
+				switch (rotateKey) {
+				case 'D':
+					rotateAction = RotateBy::create(0.1f, 5);
+					break;
+				case 'A':
+					rotateAction = RotateBy::create(0.1f, -5);
+					break;
+				}
+			}
+			player->runAction(Sequence::create(Spawn::create(rotateAction, moveToAction), nullptr));
 			break;
 		}
 	}
