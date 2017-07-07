@@ -155,8 +155,22 @@ void TankHonor::loadAnimation(string filepath) {
 }
 
 void TankHonor::update(float dt) {
-    static int countOfUpdate = 0;
-    ++countOfUpdate;
+	//移动子弹，并且判断子弹是否移出地图
+	for (vector<Bullets*>::iterator i = bullets.begin(); i != bullets.end();) {
+		if ((*i) != NULL) {
+			(*i)->setPositionX((*i)->getPositionX() + 5 * sin((*i)->getRotation()));
+			(*i)->setPositionY((*i)->getPositionY() + 5 * cos((*i)->getRotation()));
+		}
+		if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
+			(*i)->removeFromParentAndCleanup(true);
+			i = bullets.erase(i);
+		}
+		else {
+			++i;
+		}
+	}
+
+
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -234,7 +248,6 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::GameOver() {
-    unschedule(schedule_selector(FriendShip::updateShip));
     unschedule(schedule_selector(FriendShip::boxFall));
     unschedule(schedule_selector(FriendShip::update));
     SimpleAudioEngine::getInstance()->stopBackgroundMusic("bgm.mp3");
