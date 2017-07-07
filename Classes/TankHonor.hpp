@@ -45,6 +45,7 @@ public:
                 attack_value = 200;
                 defense_value = 150;
                 attack_range = 1000;  // 1000ms
+                speed = 
                 break;
             case TANK_TYPE::FIGHTER:
                 break;
