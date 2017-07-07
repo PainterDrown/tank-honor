@@ -28,7 +28,7 @@ bool TankHonor::init() {
     addSchedulers();  // 添加定时调度器
     
     // 添加调度器
-    schedule(schedule_selector(TankHonor::update), 0.01f, kRepeatForever, 0.1f);
+    schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.1f);
     
     return true;
 }
@@ -155,20 +155,49 @@ void TankHonor::loadAnimation(string filepath) {
 }
 
 void TankHonor::update(float dt) {
-	////移动子弹，并且判断子弹是否移出地图
-	//for (vector<Bullets*>::iterator i = bullets.begin(); i != bullets.end();) {
-	//	if ((*i) != NULL) {
-	//		(*i)->setPositionX((*i)->getPositionX() + 5 * sin((*i)->getRotation()));
-	//		(*i)->setPositionY((*i)->getPositionY() + 5 * cos((*i)->getRotation()));
-	//	}
-	//	if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
-	//		(*i)->removeFromParentAndCleanup(true);
-	//		i = bullets.erase(i);
-	//	}
-	//	else {
-	//		++i;
-	//	}
-	//}
+	//1.判断子弹是否发射，若没有发射，调用fly函数
+	//2.判断子弹是否出界
+	//3.判断子弹是否撞到墙壁或是坦克
+	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+		bool tempState = false;
+		if ((*i)->getState() == WAITING) {
+			(*i)->fly();
+		}
+		if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
+			(*i)->removeFromParentAndCleanup(true);
+			i = bullets.erase(i);
+			tempState = true;
+		}
+		else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
+			(*i)->destroy();
+			(*i)->removeFromParentAndCleanup(true);
+			i = bullets.erase(i);
+			tempState = true;
+		}
+		for (int j = 0; j < 3; j++) {
+			if (playerTeam1[j]->getContorl() == true) {
+
+			}
+			if (playerTeam2[j]->getContorl() == true) {
+
+			}
+			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
+			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
+			if (dis1 < 30 || dis2 < 30) {
+				(*i)->hit();
+				(*i)->removeFromParentAndCleanup(true);
+				i = bullets.erase(i);
+				tempState = true;
+				if (dis1 < 30) { playerTeam1[j]->hurt(); }
+				else if (dis2 < 30) { playerTeam2[j]->hurt(); }
+			}
+		}
+		if (tempState == false) {
+			++i;
+		}
+	}
+
+
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {

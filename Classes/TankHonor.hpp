@@ -25,6 +25,10 @@ enum BULLET_STATE {
     WAITING,
     FLYING
 };
+class Wall : public Sprite {
+public:
+	Wall();
+};
 
 class Tank: public Sprite {
 public:
@@ -162,6 +166,7 @@ private:
 	vector<Tank*> playerTeam2;
 	vector<Bullet*> bullets;
 	Tank * player1, player2;
+	Wall *wall;
 
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
