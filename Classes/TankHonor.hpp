@@ -38,7 +38,13 @@ private:
     
     SpriteFrame* frame1;
     SpriteFrame* frame2;
-    
+
+	//玩家队伍和子弹
+	vector<Tank*> playerTeam1;
+	vector<Tank*> playerTeam2;
+	vector<Bullets*> bullets;
+	Tank * player1, player2;
+
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
 };
@@ -55,5 +61,7 @@ private:
     int defense_value;   // 防御力
     int attack_range;    // 射程
 };
+
+
 
 #endif
