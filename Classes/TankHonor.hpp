@@ -160,13 +160,11 @@ private:
 	//玩家队伍和子弹
 	vector<Tank*> playerTeam1;
 	vector<Tank*> playerTeam2;
-	vector<Bullets*> bullets;
+	vector<Bullet*> bullets;
 	Tank * player1, player2;
 
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
-    
-    vector<Bullet*> bullets;
 };
 
 

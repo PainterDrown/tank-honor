@@ -34,21 +34,21 @@ bool TankHonor::init() {
 }
 
 void TankHonor::preloadMusic() {
-    auto sae = SimpleAudioEngine::getInstance();
-    
-    // 加载音效
-    sae->preloadEffect("fire.mp3");
-    sae->preloadEffect("boom.mp3");
-    sae->preloadEffect("gameover.mp3");
-    
-    // 播放背景音乐
-    sae->preloadBackgroundMusic("bgm.mp3");
-    sae->playBackgroundMusic("bgm.mp3", true);
+    //auto sae = SimpleAudioEngine::getInstance();
+    //
+    //// 加载音效
+    //sae->preloadEffect("fire.mp3");
+    //sae->preloadEffect("boom.mp3");
+    //sae->preloadEffect("gameover.mp3");
+    //
+    //// 播放背景音乐
+    //sae->preloadBackgroundMusic("bgm.mp3");
+    //sae->playBackgroundMusic("bgm.mp3", true);
 }
 
 void TankHonor::addSprites() {
     // 添加地图
-    auto bg = Sprite::create("map.png");
+    auto bg = Sprite::create("pictures/map.png");
     bg->setPosition(visibleSize / 2);
     bg->setScale(visibleSize.width / bg->getContentSize().width, visibleSize.height / bg->getContentSize().height);
     this->addChild(bg, 0);
@@ -63,18 +63,18 @@ void TankHonor::addSprites() {
 }
 
 void TankHonor::addListeners() {
-    auto keyboardListener = EventListenerKeyboard::create();
+   /* auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = CC_CALLBACK_2(TankHonor::onKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(TankHonor::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
     
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(TankHonor::onConcactBegin, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);*/
 }
 
 void TankHonor::loadAnimation(string filepath) {
-    Vector<SpriteFrame*> PlayerIdleWithBox;
+    /*Vector<SpriteFrame*> PlayerIdleWithBox;
     Vector<SpriteFrame*> PlayerIdleWithoutBox;
     Vector<SpriteFrame*> PlayerPutUp;
     Vector<SpriteFrame*> PlayerPutDown;
@@ -151,86 +151,84 @@ void TankHonor::loadAnimation(string filepath) {
     PlayerJumpWithBox.pushBack(SpriteFrame::createWithTexture(PlayerImage, CC_RECT_PIXELS_TO_POINTS(Rect(64, 81, 32, 36))));
     PlayerJumpWithBox.pushBack(IdleWithBox);
     Animation* PlayerJumpWithBoxAnimation = Animation::createWithSpriteFrames(PlayerJumpWithBox, 1.0);
-    AnimationCache::getInstance()->addAnimation(PlayerJumpWithBoxAnimation, filepath + "JumpWithBoxAnimation");
+    AnimationCache::getInstance()->addAnimation(PlayerJumpWithBoxAnimation, filepath + "JumpWithBoxAnimation");*/
 }
 
 void TankHonor::update(float dt) {
-	//移动子弹，并且判断子弹是否移出地图
-	for (vector<Bullets*>::iterator i = bullets.begin(); i != bullets.end();) {
-		if ((*i) != NULL) {
-			(*i)->setPositionX((*i)->getPositionX() + 5 * sin((*i)->getRotation()));
-			(*i)->setPositionY((*i)->getPositionY() + 5 * cos((*i)->getRotation()));
-		}
-		if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
-			(*i)->removeFromParentAndCleanup(true);
-			i = bullets.erase(i);
-		}
-		else {
-			++i;
-		}
-	}
-
-
+	////移动子弹，并且判断子弹是否移出地图
+	//for (vector<Bullets*>::iterator i = bullets.begin(); i != bullets.end();) {
+	//	if ((*i) != NULL) {
+	//		(*i)->setPositionX((*i)->getPositionX() + 5 * sin((*i)->getRotation()));
+	//		(*i)->setPositionY((*i)->getPositionY() + 5 * cos((*i)->getRotation()));
+	//	}
+	//	if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
+	//		(*i)->removeFromParentAndCleanup(true);
+	//		i = bullets.erase(i);
+	//	}
+	//	else {
+	//		++i;
+	//	}
+	//}
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
-    switch (code) {
-        case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            player1->setFlippedX(true);
-            IsPlayer1Left = true;
-            break;
-            
-        case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            player1->setFlippedX(false);
-            IsPlayer1Right = true;
-            break;
-            
-        case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-            if (!IsPlayer1Jump) {
-                IsPlayer1Jump = true;
-                player1->getPhysicsBody()->setVelocity(Vec2(player1->getPhysicsBody()->getVelocity().x, 200.0f));
-            }
-            break;
+    //switch (code) {
+    //    case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+    //        player1->setFlippedX(true);
+    //        IsPlayer1Left = true;
+    //        break;
+    //        
+    //    case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+    //        player1->setFlippedX(false);
+    //        IsPlayer1Right = true;
+    //        break;
+    //        
+    //    case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+    //        if (!IsPlayer1Jump) {
+    //            IsPlayer1Jump = true;
+    //            player1->getPhysicsBody()->setVelocity(Vec2(player1->getPhysicsBody()->getVelocity().x, 200.0f));
+    //        }
+    //        break;
 
-        case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
-        case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
-            if (!IsPlayer1Hold) {  // 如果没有举着箱子
-                auto player1Bound = player1->getBoundingBox();
-                for (auto b : boxes) {
-                    auto boxBound = b->getBoundingBox();
-                    if ((player1->isFlippedX()  && b->getPosition().x < player1->getPosition().x) ||
-                        (!player1->isFlippedX() && b->getPosition().x > player1->getPosition().x)) {
-                        if (player1Bound.intersectsRect(boxBound)) {
-                            IsPlayer1Hold = true;
-                            player1->setSpriteFrame(IdleWithBox1);
-                            holdingBox = b;
-                            auto newbody = PhysicsBody::createBox(b->getContentSize(), PhysicsMaterial(100.0f, 0.5f, 10.0f));
-                            b->setPhysicsBody(newbody);
-                            // 添加关节
-                            joint1 = PhysicsJointDistance::construct(
-                                 player1->getPhysicsBody(), b->getPhysicsBody(), player1->getAnchorPoint(), b->getAnchorPoint());
-                            m_world->addJoint(joint1);
-                            break;
-                        }
-                    }
-                }
-            } else {  // 如果正在举着箱子
-                IsPlayer1Hold = false;
-                flyingBoxes.push_back(holdingBox);
-                m_world->removeJoint(joint1);
-                if (player1->isFlippedX()) holdingBox->getPhysicsBody()->setVelocity(Vec2(-200.0f, 300.0f));
-                else holdingBox->getPhysicsBody()->setVelocity(Vec2(200.0f, 300.0f));
-                player1->stopActionByTag(11);
-                auto animation = Animate::create(AnimationCache::getInstance()->getAnimation("player1PutDownAnimation"));
-                player1->runAction(animation);
-            }
-            break;
-        default:;
-    }
+    //    case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
+    //    case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+    //        if (!IsPlayer1Hold) {  // 如果没有举着箱子
+    //            auto player1Bound = player1->getBoundingBox();
+    //            for (auto b : boxes) {
+    //                auto boxBound = b->getBoundingBox();
+    //                if ((player1->isFlippedX()  && b->getPosition().x < player1->getPosition().x) ||
+    //                    (!player1->isFlippedX() && b->getPosition().x > player1->getPosition().x)) {
+    //                    if (player1Bound.intersectsRect(boxBound)) {
+    //                        IsPlayer1Hold = true;
+    //                        player1->setSpriteFrame(IdleWithBox1);
+    //                        holdingBox = b;
+    //                        auto newbody = PhysicsBody::createBox(b->getContentSize(), PhysicsMaterial(100.0f, 0.5f, 10.0f));
+    //                        b->setPhysicsBody(newbody);
+    //                        // 添加关节
+    //                        joint1 = PhysicsJointDistance::construct(
+    //                             player1->getPhysicsBody(), b->getPhysicsBody(), player1->getAnchorPoint(), b->getAnchorPoint());
+    //                        m_world->addJoint(joint1);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        } else {  // 如果正在举着箱子
+    //            IsPlayer1Hold = false;
+    //            flyingBoxes.push_back(holdingBox);
+    //            m_world->removeJoint(joint1);
+    //            if (player1->isFlippedX()) holdingBox->getPhysicsBody()->setVelocity(Vec2(-200.0f, 300.0f));
+    //            else holdingBox->getPhysicsBody()->setVelocity(Vec2(200.0f, 300.0f));
+    //            player1->stopActionByTag(11);
+    //            auto animation = Animate::create(AnimationCache::getInstance()->getAnimation("player1PutDownAnimation"));
+    //            player1->runAction(animation);
+    //        }
+    //        break;
+    //    default:;
+    //}
 }
 
 void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
-    switch (code) {
+    /*switch (code) {
         case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
             IsPlayer1Left = false;
             player1->stopActionByTag(11);
@@ -244,11 +242,11 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
             else player1->setSpriteFrame(frame1);
             break;
         default:;
-    }
+    }*/
 }
 
-void TankHonor::GameOver() {
-    unschedule(schedule_selector(FriendShip::boxFall));
+void TankHonor::gameOver() {
+    /*unschedule(schedule_selector(FriendShip::boxFall));
     unschedule(schedule_selector(FriendShip::update));
     SimpleAudioEngine::getInstance()->stopBackgroundMusic("bgm.mp3");
     SimpleAudioEngine::getInstance()->playEffect("gameover.mp3", false);
@@ -282,16 +280,24 @@ void TankHonor::GameOver() {
     auto rankBtn = MenuItemLabel::create(rankLabel, CC_CALLBACK_1(FriendShip::seeRanking, this));
     Menu* rankMenu = Menu::create(rankBtn, NULL);
     rankMenu->setPosition(visibleSize.width / 2 + 90, visibleSize.height / 3);
-    this->addChild(rankMenu);
+    this->addChild(rankMenu);*/
 }
 
-void FriendShip::replayCallback(Ref * pSender) {
-    Director::getInstance()->replaceScene(FriendShip::createScene(::cookie));
+void TankHonor::addSchedulers() {
+
 }
 
-void FriendShip::exitCallback(Ref * pSender) {
-    Director::getInstance()->end();
+void TankHonor::removeSchedulers() {
+
+}
+
+void TankHonor::replayCallback(Ref * pSender) {
+    /*Director::getInstance()->replaceScene(TankHonor::createScene(::cookie));*/
+}
+
+void TankHonor::exitCallback(Ref * pSender) {
+    /*Director::getInstance()->end();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
-#endif
+#endif*/
 }
