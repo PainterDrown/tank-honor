@@ -179,11 +179,13 @@ public:
     }
     
     void fly() {
+        TankHonor
     }
     
 private:
     TANK_TYPE type;
     BULLET_STATE state;
+    bool control;
     int attack_value;
     int attack_range;
     int bullet_speed;
@@ -196,6 +198,10 @@ public:
     
     virtual bool init();
     CREATE_FUNC(TankHonor);  // implement the "static create()" method manually
+    
+    void addBullet(Bullet *bullet) {
+        bullets.push_back(bullet);
+    }
     
     void addSprites();        // 添加背景和各种精灵
     void addListeners();      // 添加监听器

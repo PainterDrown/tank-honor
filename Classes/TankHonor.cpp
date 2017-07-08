@@ -16,6 +16,8 @@ bool TankHonor::init() {
         return false;
     }
     
+    
+    
     visibleSize = Director::getInstance()->getVisibleSize();
 	addSprites();     // 添加背景和各种精灵
 	addListeners();   // 添加监听器
