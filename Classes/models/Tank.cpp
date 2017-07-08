@@ -10,7 +10,7 @@ static Tank* Tank::create(const bool isR = true,
     tank->type = type;
     tank->bindImage();
     tank->initAttributes();
-    tank->tankState = NORMAL;
+    tank->setTankState(TANK_TYPE::NORMAL);
     return tank;
 }
 
@@ -28,6 +28,8 @@ void Tank::bindImage() {
         case TANK_TYPE::SHOOTER:
             filename += "shooter.png";
             break;
+        case TANK_TYPE::BASE:
+            filename += "base.png";
         default:
             return;
     }
@@ -58,6 +60,12 @@ void Tank::initAttributes() {
             attack_range  = 1000;
             moving_speed  = 30;
             break;
+        case TANK_TYPE::BASE:
+            health_value  = 2200;
+            attack_value  = 0;
+            defense_value = 220;
+            attack_range  = 0;
+            moving_speed  = 0;
         default:
             return;
     }
@@ -93,6 +101,14 @@ int Tank::getBulletSpeed() const {
 
 TANK_STATE Tank::getTankState() const {
     return tankState;
+}
+
+void Tank::setIsR(bool isr) {
+    this->isR = isr;
+}
+
+void Tank::setType(TANK_TYPE type) {
+    this->type = type;
 }
 
 void Tank::setTankState(TANK_STATE s) {
