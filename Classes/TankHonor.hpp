@@ -25,6 +25,13 @@ enum BULLET_STATE {
     WAITING,
     FLYING
 };
+class Wall : public Sprite {
+public:
+	Wall();
+};
+
+class Bullet;
+class Tank;
 
 class Tank: public Sprite {
 public:
@@ -38,6 +45,7 @@ public:
         tank->type = type;
         tank->bindImage();
         tank->initAttributes();
+		tank->tankState = NORMAL;
         return tank;
     }
     
@@ -89,6 +97,10 @@ public:
                 return;
         }
     }
+
+	TANK_TYPE getType() const {
+		return type;
+	}
     
     int getHealthValue() const {
         return health_value;
@@ -114,9 +126,21 @@ public:
         return bullet_speed;
     }
 
+	TANK_STATE getTankState() const {
+		return tankState;
+	}
+
+	void setTankState(TANK_STATE s) {
+		tankState = s;
+	}
+
+	void hurt(Bullet* hitBullet) {
+		// health_value -= hitBullet->calculateDamage(hitBullet);
+	}
 private:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型
+	TANK_STATE tankState; // 坦克的状态
     
     int health_value;    // 生命值
     int attack_value;    // 攻击力
@@ -210,8 +234,9 @@ public:
     
     void update(float dt);  // 定时更新到函数
 	void moveUpdate(float dt);  // 定时更新移动函数
-	void moveTank(char moveKey, char rotateKey, Tank* player);  // 移动函数
-    
+	void moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player);  // 移动函数
+	void changeControl(Tank *&player, vector<Tank*> playerTeam);  // 切换控制权
+	void wallMove();
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
     void onKeyReleased(EventKeyboard::KeyCode code, Event * event);
@@ -231,16 +256,22 @@ private:
     SpriteFrame* frame2;
 
 	// 辅助信息
-	bool isMove;    // 判断是否运动
-	bool isRotate;  // 判断是否旋转
-	char moveKey;   // 按键判断
-	char rotateKey; // 旋转按键判断
+	bool isRMove;    // 判断是否运动
+	bool isRRotate;  // 判断是否旋转
+	char RMoveKey;   // 按键判断
+	char RRotateKey; // 旋转按键判断
+
+	bool isBMove;    // 判断是否运动
+	bool isBRotate;  // 判断是否旋转
+	char BMoveKey;   // 按键判断
+	char BRotateKey; // 旋转按键判断
 
 	//玩家队伍和子弹
 	vector<Tank*> playerTeam1;
 	vector<Tank*> playerTeam2;
 	vector<Bullet*> bullets;
-	Tank * player1, player2;
+	Tank * player1, *player2;
+	Wall *wall;
 
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
