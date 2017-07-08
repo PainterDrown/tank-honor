@@ -109,7 +109,7 @@ public:
                 attack_range  = 1000;
                 moving_speed  = 30;
                 break;
-			case TANK_TYPE:::BASE:
+			case TANK_TYPE::BASE:
 				health_value = 3000;
 				attack_value = 0;
 				defense_value = 500;

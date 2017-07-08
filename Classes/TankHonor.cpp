@@ -128,7 +128,7 @@ void TankHonor::update(float dt) {
 
 	// wallMove();
 
-	/*for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
 		bool tempState = false;
 		if ((*i)->getState() == WAITING) {
 			(*i)->fly();
@@ -145,8 +145,8 @@ void TankHonor::update(float dt) {
 			tempState = true;
 		}
 		for (int j = 0; j < 3; j++) {
-			playerTeam1[j]->AI();
-			playerTeam2[j]->AI();
+			if (playerTeam1[j]->getType() == player1->getType()) { playerTeam1[j]->AI(); }
+			if (playerTeam2[j]->getType() == player2->getType()) { playerTeam2[j]->AI(); }
 			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
 			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
 			if (dis1 < 30 || dis2 < 30) {
@@ -161,7 +161,7 @@ void TankHonor::update(float dt) {
 		if (tempState == false) {
 			++i;
 		}
-	}*/
+	}
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
