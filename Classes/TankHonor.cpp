@@ -40,10 +40,24 @@ void TankHonor::addSprites() {
 	this->addChild(bg, 0);
 
 	// 添加坦克精灵
-	player1 = Tank::create();
-	player1->setPosition(Vec2(50, visibleSize.height / 2));
-	//player1->setAnchorPoint(Vec2(player1->getContentSize().width, player1->getContentSize().height / 2));
-	this->addChild(player1, 2);
+	Tank* AITank0 = Tank::create(true, FIGHTER);
+	Tank* AITank1 = Tank::create(true, ASSASSIN);
+	Tank* AITank2 = Tank::create(true, SHOOTER);
+	AITank0->setPosition(Vec2(50, visibleSize.height / 2));
+	AITank1->setPosition(Vec2(50, visibleSize.height / 3));
+	AITank2->setPosition(Vec2(50, 2 * visibleSize.height / 3));
+	AITank0->setContentSize(Size(50, 50));
+	AITank1->setContentSize(Size(50, 50));
+	AITank2->setContentSize(Size(50, 50));
+	playerTeam1.push_back(AITank0);
+	playerTeam1.push_back(AITank1);
+	playerTeam1.push_back(AITank2);
+	this->addChild(AITank0, 2);
+	this->addChild(AITank1, 2);
+	this->addChild(AITank2, 2);
+
+	// 交付控制权
+	player1 = AITank0;
 }
 
 void TankHonor::preloadMusic() {
@@ -129,56 +143,12 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 			isRotate = true;
 			rotateKey = 'A';
 			break;
-        //case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        //    player1->setFlippedX(true);
-        //    IsPlayer1Left = true;
-        //    break;
-        //    
-        //case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        //    player1->setFlippedX(false);
-        //    IsPlayer1Right = true;
-        //    break;
-        //    
-        //case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-        //    if (!IsPlayer1Jump) {
-        //        IsPlayer1Jump = true;
-        //        player1->getPhysicsBody()->setVelocity(Vec2(player1->getPhysicsBody()->getVelocity().x, 200.0f));
-        //    }
-        //    break;
-
-        //case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
-        //case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
-        //    if (!IsPlayer1Hold) {  // 如果没有举着箱子
-        //        auto player1Bound = player1->getBoundingBox();
-        //        for (auto b : boxes) {
-        //            auto boxBound = b->getBoundingBox();
-        //            if ((player1->isFlippedX()  && b->getPosition().x < player1->getPosition().x) ||
-        //                (!player1->isFlippedX() && b->getPosition().x > player1->getPosition().x)) {
-        //                if (player1Bound.intersectsRect(boxBound)) {
-        //                    IsPlayer1Hold = true;
-        //                    player1->setSpriteFrame(IdleWithBox1);
-        //                    holdingBox = b;
-        //                    auto newbody = PhysicsBody::createBox(b->getContentSize(), PhysicsMaterial(100.0f, 0.5f, 10.0f));
-        //                    b->setPhysicsBody(newbody);
-        //                    // 添加关节
-        //                    joint1 = PhysicsJointDistance::construct(
-        //                         player1->getPhysicsBody(), b->getPhysicsBody(), player1->getAnchorPoint(), b->getAnchorPoint());
-        //                    m_world->addJoint(joint1);
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //    } else {  // 如果正在举着箱子
-        //        IsPlayer1Hold = false;
-        //        flyingBoxes.push_back(holdingBox);
-        //        m_world->removeJoint(joint1);
-        //        if (player1->isFlippedX()) holdingBox->getPhysicsBody()->setVelocity(Vec2(-200.0f, 300.0f));
-        //        else holdingBox->getPhysicsBody()->setVelocity(Vec2(200.0f, 300.0f));
-        //        player1->stopActionByTag(11);
-        //        auto animation = Animate::create(AnimationCache::getInstance()->getAnimation("player1PutDownAnimation"));
-        //        player1->runAction(animation);
-        //    }
-        //    break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_K:
+			changeControl();
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_J:
+			player1->setTankState(ATTACKING);
+			break;
         default:;
     }
 }
@@ -201,6 +171,9 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 			rotateKey = ' ';
 			isRotate = false;
 			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_J:
+			player1->setTankState(NORMAL);
+			break;
         default:;
     }
 }
@@ -215,6 +188,7 @@ void TankHonor::addSchedulers() {
 }
 
 void TankHonor::moveUpdate(float dt) {
+	// 移动
 	this->moveTank(moveKey, rotateKey, player1);
 }
 
@@ -225,59 +199,8 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 	cocos2d::RotateBy* rotateAction = NULL;
 	 //前后移动
 	if (isMove || isRotate) {
-		//switch (moveKey) {
-		//case 'W':
-		//	moveToAction = MoveTo::create(0.1f, Vec2(
-		//		player->getPositionX() + 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
-		//		player->getPositionY() + 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
-		//	rotateAction = RotateBy::create(0.1f, 0);
-		//	if (isRotate) {
-		//		switch (rotateKey) {
-		//		case 'D':
-		//			/*moveToAction = MoveTo::create(0.1f, Vec2(
-		//				player1->getPositionX() + 
-		//			))
-		//			rotateAction = RotateBy::create(0.1f, 5);*/
-		//			break;
-		//		case 'A':
-		//			rotateAction = RotateBy::create(0.1f, -5);
-		//			break;
-		//		}
-		//	}
-		//	player->runAction(Sequence::create(rotateAction, moveToAction, NULL));
-		//	break;
-		//case 'S':
-		//	moveToAction = MoveTo::create(0.1f, Vec2(
-		//		player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(90)),
-		//		player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(90))));
-		//	rotateAction = RotateBy::create(0.1f, 0);
-		//	if (isRotate) {
-		//		switch (rotateKey) {
-		//		case 'D':
-		//			rotateAction = RotateBy::create(0.1f, 10);
-		//			moveToAction = MoveTo::create(0.1f, Vec2(
-		//				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(100)),
-		//				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(100))));
-		//			break;
-		//		case 'A':
-		//			rotateAction = RotateBy::create(0.1f, -10);
-		//			moveToAction = MoveTo::create(0.1f, Vec2(
-		//				player->getPositionX() - 10 * sin(player->getRotation() + CC_DEGREES_TO_RADIANS(80)),
-		//				player->getPositionY() - 10 * cos(player->getRotation() + CC_DEGREES_TO_RADIANS(80))));
-		//			break;
-		//		}
-		//	}
-		//	player->runAction(Sequence::create(Spawn::create(rotateAction, moveToAction), nullptr));
-
-		//	break;
-		//}
-		switch (moveKey)
-		{
-			float value;
-			float value2;
+		switch (moveKey) {
 		case 'W':
-			value = CC_RADIANS_TO_DEGREES(player->getRotation());
-			value2 = player->getRotation();
 			moveToAction =  MoveTo::create(0.1f, Vec2(
 						player->getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90)),
 						player->getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90))));
@@ -290,13 +213,8 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 			player->runAction(moveToAction);
 			break;
 		}
-		switch (rotateKey)
-		{
-			float value;
-			float value2;
+		switch (rotateKey) {
 		case 'A':
-			value = CC_RADIANS_TO_DEGREES(player->getRotation());
-			value2 = player->getRotation();
 			rotateAction = RotateBy::create(0.1f, (-10));
 			player->runAction(rotateAction);
 			break;
@@ -306,7 +224,22 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 			break;
 		}
 	}
+}
 
+void TankHonor::changeControl() {
+	for (auto i = 0; i < 3; i++) {
+		auto value = playerTeam1[i]->getType();
+		auto value1 = player1->getType();
+		if (playerTeam1[i]->getType() == player1->getType()) {
+			if (i == 2) {
+				player1 = playerTeam1[0];
+			}
+			else {
+				player1 = playerTeam1[i + 1];
+			}
+			break;
+		}
+	}
 }
 
 void TankHonor::removeSchedulers() {

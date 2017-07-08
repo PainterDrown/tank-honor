@@ -30,6 +30,9 @@ public:
 	Wall();
 };
 
+class Bullet;
+class Tank;
+
 class Tank: public Sprite {
 public:
     static Tank* create(const bool isR = true,
@@ -42,6 +45,7 @@ public:
         tank->type = type;
         tank->bindImage();
         tank->initAttributes();
+		tank->tankState = NORMAL;
         return tank;
     }
     
@@ -93,6 +97,10 @@ public:
                 return;
         }
     }
+
+	TANK_TYPE getType() const {
+		return type;
+	}
     
     int getHealthValue() const {
         return health_value;
@@ -118,9 +126,21 @@ public:
         return bullet_speed;
     }
 
+	TANK_STATE getTankState() const {
+		return tankState;
+	}
+
+	void setTankState(TANK_STATE s) {
+		tankState = s;
+	}
+
+	void hurt(Bullet* hitBullet) {
+		// health_value -= hitBullet->calculateDamage(hitBullet);
+	}
 private:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型
+	TANK_STATE tankState; // 坦克的状态
     
     int health_value;    // 生命值
     int attack_value;    // 攻击力
@@ -209,7 +229,8 @@ public:
     void update(float dt);  // 定时更新到函数
 	void moveUpdate(float dt);  // 定时更新移动函数
 	void moveTank(char moveKey, char rotateKey, Tank* player);  // 移动函数
-    
+	void changeControl();  // 切换控制权
+
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
     void onKeyReleased(EventKeyboard::KeyCode code, Event * event);
