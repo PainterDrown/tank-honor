@@ -21,6 +21,8 @@ bool TankHonor::init() {
         return false;
     }
     
+    
+    
     visibleSize = Director::getInstance()->getVisibleSize();
 	addSprites();     // 添加背景和各种精灵
 	addListeners();   // 添加监听器
@@ -82,6 +84,10 @@ void TankHonor::addSprites() {
 
 	// 交付控制权
 	player2 = BTank0;
+    
+    // 两个基地
+    base1->setType(TANK_TYPE::BASE);
+    base2->setType(TANK_TYPE::BASE);
 }
 
 void TankHonor::preloadMusic() {
@@ -131,7 +137,7 @@ void TankHonor::update(float dt) {
 
 	// wallMove();
 
-	/*for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
 		bool tempState = false;
 		if ((*i)->getState() == WAITING) {
 			(*i)->fly();
@@ -148,8 +154,8 @@ void TankHonor::update(float dt) {
 			tempState = true;
 		}
 		for (int j = 0; j < 3; j++) {
-			playerTeam1[j]->AI();
-			playerTeam2[j]->AI();
+			if (playerTeam1[j]->getType() == player1->getType()) { playerTeam1[j]->AI(); }
+			if (playerTeam2[j]->getType() == player2->getType()) { playerTeam2[j]->AI(); }
 			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
 			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
 			if (dis1 < 30 || dis2 < 30) {
@@ -164,7 +170,7 @@ void TankHonor::update(float dt) {
 		if (tempState == false) {
 			++i;
 		}
-	}*/
+	}
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -262,7 +268,12 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
-    
+	if (base1->getTankState() == TANK_STATE::DESTROYED) {
+
+	}
+	else if (base2->getTankState() == TANK_STATE::DESTROYED) {
+
+	}
 }
 
 void TankHonor::addSchedulers() {
@@ -337,4 +348,8 @@ void TankHonor::exitCallback(Ref * pSender) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif*/
+}
+
+void TankHonor::addBullet(Bullet *bullet) {
+    bullets.push_back(bullet);
 }
