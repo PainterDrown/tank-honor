@@ -1,6 +1,6 @@
 #include "Tank.hpp"
 
-static Tank* Tank::create(const bool isR = true,
+Tank* Tank::create(const bool isR = true,
                     const TANK_TYPE type = TANK_TYPE::FIGHTER) {
     Tank *tank = new Tank();
     if (!tank) {
@@ -10,7 +10,7 @@ static Tank* Tank::create(const bool isR = true,
     tank->type = type;
     tank->bindImage();
     tank->initAttributes();
-    tank->setTankState(TANK_TYPE::NORMAL);
+    tank->setTankState(TANK_STATE::NORMAL);
     return tank;
 }
 

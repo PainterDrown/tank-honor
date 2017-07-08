@@ -1,6 +1,6 @@
 #include "Bullet.hpp"
 
-static Bullet* Bullet::create(const TANK_TYPE type,
+Bullet* Bullet::create(const TANK_TYPE type,
                       const int attack_value,
                       const int attack_range,
                       const int bullet_speed) {
@@ -53,7 +53,7 @@ void Bullet::destroy() {
     runAction(aimation);
 }
 
-void Bullet::hit(const Tank *tank) {
+void Bullet::hit(Tank *tank) {
     destroy();
     int damage = calculateDamage(tank);
     tank->hurt(damage);

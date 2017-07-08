@@ -30,7 +30,7 @@ public:
     void destroy();
     
     // 子弹撞到坦克，播放爆炸的同时坦克收到伤害
-    void hit(const Tank *tank);
+    void hit(Tank *tank);
     
 private:
     TANK_TYPE type;
