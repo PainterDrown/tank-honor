@@ -9,6 +9,9 @@ USING_NS_CC;
 using namespace CocosDenshion;
 using namespace std;
 
+class Bullet;
+class Tank;
+
 enum TANK_STATE {
     NORMAL,     // 正常状态，不用进行特殊处理
     ATTACKING,  // 正要发动攻击，检测到时要播放进攻动画
@@ -29,9 +32,6 @@ class Wall : public Sprite {
 public:
 	Wall();
 };
-
-class Bullet;
-class Tank;
 
 class Tank: public Sprite {
 public:
@@ -135,7 +135,13 @@ public:
 	}
 
 	void hurt(Bullet* hitBullet) {
-		// health_value -= hitBullet->calculateDamage(hitBullet);
+		double damage = hitBullet->calculateDamage(*this);
+		if (health_value <= damage) {
+			this->tankState = DESTROYED;
+		}
+		else {
+			health_value -= damage;
+		}
 	}
 private:
     bool isR;        // 坦克时R方还是B方
