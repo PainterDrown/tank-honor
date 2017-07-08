@@ -23,6 +23,7 @@ bool TankHonor::init() {
     
     visibleSize = Director::getInstance()->getVisibleSize();
     timer = 0;
+	isWallDown = true;
     
 	addSprites();     // 添加背景和各种精灵
 	addListeners();   // 添加监听器
@@ -86,8 +87,21 @@ void TankHonor::addSprites() {
 	player2 = BTank0;
     
     // 两个基地
-    base1->setType(TANK_TYPE::BASE);
+	base1 = Tank::create(true, BASE);
+	base2 = Tank::create(false, BASE);
+	base1->setType(TANK_TYPE::BASE);
     base2->setType(TANK_TYPE::BASE);
+	base1->setPosition(Vec2(100, visibleSize.height / 2));
+	base2->setPosition(Vec2(visibleSize.width - 100, visibleSize.height / 2));
+	base1->setContentSize(Size(170, 170));
+	base2->setContentSize(Size(170, 170));
+	this->addChild(base1);
+	this->addChild(base2);
+
+	// 墙实例
+	wall = Wall::create();
+	wall->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	this->addChild(wall);
 }
 
 void TankHonor::preloadMusic() {
@@ -114,21 +128,26 @@ void TankHonor::loadAnimation(string filepath) {
     
 }
 
-//void TankHonor::wallMove() {
-//	MoveTo* moveToAction;
-//	if (wall->getPosition().y < 0) {
-//		wall->stopAllActions();
-//		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, visibleSize.height + 100));
-//		wall->runAction(moveToAction);
-//	}
-//	else if (wall->getPosition().y > visibleSize.height) {
-//		wall->stopAllActions();
-//		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, -100));
-//		wall->runAction(moveToAction);
-//	}
-//}
+void TankHonor::wallMove() {
+	MoveBy* moveToAction;
+	if (isWallDown) {
+		moveToAction = MoveBy::create(0.1f, Vec2(0, -20));
+		wall->runAction(moveToAction);
+	}
+	else {
+		moveToAction = MoveBy::create(0.1f, Vec2(0, 20));
+		wall->runAction(moveToAction);
+	}
+	if (wall->getPosition().y < wall->getContentSize().height / 2) {
+		isWallDown = false;
+	}
+	else if (wall->getPosition().y > visibleSize.height - wall->getContentSize().height / 2) {
+		isWallDown = true;
+	}
+}
 
 void TankHonor::wallBeginMove() {
+	wall->stopAllActions();
     float distance = visibleSize.height - wall->getContentSize().height;
     auto moveUp = MoveBy::create(3.0f, Vec2(0, distance));
     auto moveDown = MoveBy::create(3.0f, Vec2(0, -distance));
@@ -138,59 +157,61 @@ void TankHonor::wallBeginMove() {
 }
 
 void TankHonor::update(float dt) {
+	wallMove();
     // 计时器
-    static int count = 0;
+    /*static int count = 0;
     if (count == 0) {
         wallBeginMove();
     }
     if (count % 10 == 0) {
         timer++;
-    }
+    }*/
+
     
     // 1.判断子弹是否发射，若没有发射，调用fly函数
     // 2.判断子弹是否出界
     // 3.判断子弹是否撞到墙壁或是坦克
     // 4.移动子弹，并且判断子弹是否移出地图
     // 5.移动墙壁
-	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
-		bool tempState = false;
-		if ((*i)->getState() == WAITING) {
-			(*i)->fly();
-		}
-		if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
-			(*i)->removeFromParentAndCleanup(true);
-			i = bullets.erase(i);
-			tempState = true;
-		}
-		else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
-			(*i)->destroy();
-			(*i)->removeFromParentAndCleanup(true);
-			i = bullets.erase(i);
-			tempState = true;
-		}
-		for (int j = 0; j < 3; j++) {
-			if (playerTeam1[j]->getType() == player1->getType()) { playerTeam1[j]->AI(); }
-			if (playerTeam2[j]->getType() == player2->getType()) { playerTeam2[j]->AI(); }
-			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
-			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
-			if (dis1 < 30 || dis2 < 30) {
-				(*i)->removeFromParentAndCleanup(true);
-				tempState = true;
-				if (dis1 < 30) {
-                    (*i)->hit(playerTeam1[j]);
-                }
-				else if (dis2 < 30) {
-                    (*i)->hit(playerTeam2[j]);
-                }
-                i = bullets.erase(i);
-			}
-		}
-		if (tempState == false) {
-			++i;
-		}
-	}
-    
-    count++;
+	//for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+	//	bool tempState = false;
+	//	if ((*i)->getState() == WAITING) {
+	//		(*i)->fly();
+	//	}
+	//	if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
+	//		(*i)->removeFromParentAndCleanup(true);
+	//		i = bullets.erase(i);
+	//		tempState = true;
+	//	}
+	//	else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
+	//		(*i)->destroy();
+	//		(*i)->removeFromParentAndCleanup(true);
+	//		i = bullets.erase(i);
+	//		tempState = true;
+	//	}
+	//	for (int j = 0; j < 3; j++) {
+	//		//if (playerTeam1[j]->getType() == player1->getType()) { playerTeam1[j]->AI(); }
+	//		//if (playerTeam2[j]->getType() == player2->getType()) { playerTeam2[j]->AI(); }
+	//		int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
+	//		int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
+	//		if (dis1 < 30 || dis2 < 30) {
+	//			(*i)->removeFromParentAndCleanup(true);
+	//			tempState = true;
+	//			if (dis1 < 30) {
+ //                   (*i)->hit(playerTeam1[j]);
+ //               }
+	//			else if (dis2 < 30) {
+ //                   (*i)->hit(playerTeam2[j]);
+ //               }
+ //               i = bullets.erase(i);
+	//		}
+	//	}
+	//	if (tempState == false) {
+	//		++i;
+	//	}
+	//}
+ //   
+ //   count++;
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {

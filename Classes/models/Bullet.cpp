@@ -58,3 +58,7 @@ void Bullet::hit(Tank *tank) {
     int damage = calculateDamage(tank);
     tank->hurt(damage);
 }
+
+void Bullet::fly() {
+
+}

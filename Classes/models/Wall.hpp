@@ -8,6 +8,8 @@ using namespace std;
 class Wall: public Sprite {
 public:
     Wall();
+	static Wall* create();
+	void bindImage();
 };
 
 #endif

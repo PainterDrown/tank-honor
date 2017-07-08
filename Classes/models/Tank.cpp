@@ -1,7 +1,7 @@
 #include "Tank.hpp"
 
-Tank* Tank::create(const bool isR = true,
-                    const TANK_TYPE type = TANK_TYPE::FIGHTER) {
+Tank* Tank::create(const bool isR,
+                   const TANK_TYPE type) {
     Tank *tank = new Tank();
     if (!tank) {
         return NULL;
@@ -30,6 +30,7 @@ void Tank::bindImage() {
             break;
         case TANK_TYPE::BASE:
             filename += "base.png";
+			break;
         default:
             return;
     }

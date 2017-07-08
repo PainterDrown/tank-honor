@@ -39,6 +39,8 @@ public:
     void preloadMusic();                  // 预加载音乐
     void gameOver();                      // 游戏结束
     void loadAnimation(string filepath);  // 加载动画
+
+	void wallMove();  // 墙移动
     
     void replayCallback(Ref *pSender);  // 重玩按钮响应函数
     void exitCallback(Ref *pSender);    // 退出按钮响应函数
@@ -59,6 +61,8 @@ private:
 	bool isBRotate;  // 判断是否旋转
 	char BMoveKey;   // 按键判断
 	char BRotateKey; // 旋转按键判断
+
+	bool isWallDown; // 墙是否向下
 
 	//玩家队伍和子弹
 	vector<Tank*> playerTeam1;

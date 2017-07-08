@@ -15,34 +15,7 @@ public:
     
     void bindImage();
     
-    void initAttributes() {
-        bullet_speed = 1;  // 1000/ms
-        switch(type) {
-            case TANK_TYPE::ASSASSIN:
-                health_value  = 800;
-                attack_value  = 200;
-                defense_value = 150;
-                attack_range  = 1000;
-                moving_speed  = 50;
-                break;
-            case TANK_TYPE::FIGHTER:
-                health_value  = 1000;
-                attack_value  = 150;
-                defense_value = 200;
-                attack_range  = 700;
-                moving_speed  = 40;
-                break;
-            case TANK_TYPE::SHOOTER:
-                health_value  = 600;
-                attack_value  = 100;
-                defense_value = 100;
-                attack_range  = 1000;
-                moving_speed  = 30;
-                break;
-            default:
-                return;
-        }
-    }
+	void initAttributes();
     
     TANK_TYPE getType() const;
     
