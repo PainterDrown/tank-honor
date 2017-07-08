@@ -230,7 +230,7 @@ public:
 	void moveUpdate(float dt);  // 定时更新移动函数
 	void moveTank(char moveKey, char rotateKey, Tank* player);  // 移动函数
 	void changeControl();  // 切换控制权
-
+	void wallMove();
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
     void onKeyReleased(EventKeyboard::KeyCode code, Event * event);
