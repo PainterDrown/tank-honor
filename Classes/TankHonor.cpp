@@ -197,7 +197,12 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
-    
+	if (base1->getTankState() == TANK_STATE::DESTROYED) {
+
+	}
+	else if (base2->getTankState() == TANK_STATE::DESTROYED) {
+
+	}
 }
 
 void TankHonor::addSchedulers() {

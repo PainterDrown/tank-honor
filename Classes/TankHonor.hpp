@@ -109,6 +109,13 @@ public:
                 attack_range  = 1000;
                 moving_speed  = 30;
                 break;
+			case TANK_TYPE:::BASE:
+				health_value = 3000;
+				attack_value = 0;
+				defense_value = 500;
+				attack_range = 0;
+				moving_speed = 0;
+				break;
             default:
                 return;
         }
@@ -179,10 +186,10 @@ public:
 		}
 		base->setIsR(isR);
 		base->setType(type);
-		tank->bindImage();
-		tank->initAttributes();
+		base->bindImage();
+		base->initAttributes();
 		base->setTankState(NORMAL);
-		return tank;
+		return base;
 	}
 };
 
@@ -291,8 +298,9 @@ private:
 	vector<Tank*> playerTeam1;
 	vector<Tank*> playerTeam2;
 	vector<Bullet*> bullets;
-	Tank * player1, player2;
-	Wall *wall;
+	Tank* player1, player2;
+	Wall* wall;
+	Base* base1, *base2;
 
 	//基地
 	
