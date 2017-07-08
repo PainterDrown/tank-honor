@@ -66,7 +66,9 @@ public:
     
     void setTankState(TANK_STATE s);
     
-    void hurt(Bullet* hitBullet);
+    void hurt(const int hurt);
+    
+    void destroy();
 private:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型

@@ -115,6 +115,17 @@ void Tank::setTankState(TANK_STATE s) {
     tankState = s;
 }
 
-void Tank::hurt(Bullet* hitBullet) {
-    // health_value -= hitBullet->calculateDamage(hitBullet);
+void Tank::hurt(const int damage) {
+    health_value -= damage;
+    if (health_value <= 0) {
+        health_value = 0;
+        destroy();
+    }
+}
+
+void Tank::destroy() {
+    auto aimation = RepeatForever::create(Animate::create(
+        AnimationCache::getInstance()->getAnimation("tank-boom")));
+    // aimation->setTag(11);
+    runAction(aimation);
 }

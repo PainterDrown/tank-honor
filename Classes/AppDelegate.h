@@ -8,7 +8,6 @@
 #include "models/Tank.hpp"
 #include "models/Bullet.hpp"
 #include "models/Wall.hpp"
-#include "models/Base.hpp"
 using namespace std;
 using namespace CocosDenshion;
 USING_NS_CC;

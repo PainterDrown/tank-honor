@@ -18,9 +18,9 @@ bool TankHonor::init() {
         return false;
     }
     
-    
-    
     visibleSize = Director::getInstance()->getVisibleSize();
+    timer = 0;
+    
 	addSprites();     // 添加背景和各种精灵
 	addListeners();   // 添加监听器
 	addSchedulers();  // 添加定时调度器
@@ -111,29 +111,44 @@ void TankHonor::loadAnimation(string filepath) {
     
 }
 
-void TankHonor::wallMove() {
-	MoveTo* moveToAction;
-	if (wall->getPosition().y < 0) {
-		wall->stopAllActions();
-		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, visibleSize.height + 100));
-		wall->runAction(moveToAction);
-	}
-	else if (wall->getPosition().y > visibleSize.height) {
-		wall->stopAllActions();
-		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, -100));
-		wall->runAction(moveToAction);
-	}
+//void TankHonor::wallMove() {
+//	MoveTo* moveToAction;
+//	if (wall->getPosition().y < 0) {
+//		wall->stopAllActions();
+//		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, visibleSize.height + 100));
+//		wall->runAction(moveToAction);
+//	}
+//	else if (wall->getPosition().y > visibleSize.height) {
+//		wall->stopAllActions();
+//		moveToAction = MoveTo::create(0.1f, Vec2(wall->getPosition().x, -100));
+//		wall->runAction(moveToAction);
+//	}
+//}
+
+void TankHonor::wallBeginMove() {
+    float distance = visibleSize.height - wall->getContentSize().height;
+    auto moveUp = MoveBy::create(3.0f, Vec2(0, distance));
+    auto moveDown = MoveBy::create(3.0f, Vec2(0, -distance));
+    auto moveUpAndDown = Sequence::create(moveDown, moveUp, NULL);
+    auto moveUpAndDownForever = RepeatForever::create(moveUpAndDown);
+    wall->runAction(moveUpAndDownForever);
 }
 
 void TankHonor::update(float dt) {
-	//1.判断子弹是否发射，若没有发射，调用fly函数
-	//2.判断子弹是否出界
-	//3.判断子弹是否撞到墙壁或是坦克
-	//4.移动子弹，并且判断子弹是否移出地图
-	//5.移动墙壁
-
-	// wallMove();
-
+    // 计时器
+    static int count = 0;
+    if (count == 0) {
+        wallBeginMove();
+    }
+    if (count % 10 == 0) {
+        timer++;
+    }
+    
+    // 1.判断子弹是否发射，若没有发射，调用fly函数
+    // 2.判断子弹是否出界
+    // 3.判断子弹是否撞到墙壁或是坦克
+    // 4.移动子弹，并且判断子弹是否移出地图
+    // 5.移动墙壁
 	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
 		bool tempState = false;
 		if ((*i)->getState() == WAITING) {
@@ -156,18 +171,23 @@ void TankHonor::update(float dt) {
 			int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
 			int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
 			if (dis1 < 30 || dis2 < 30) {
-				(*i)->hit();
 				(*i)->removeFromParentAndCleanup(true);
-				i = bullets.erase(i);
 				tempState = true;
-				if (dis1 < 30) { playerTeam1[j]->hurt(); }
-				else if (dis2 < 30) { playerTeam2[j]->hurt(); }
+				if (dis1 < 30) {
+                    (*i)->hit(playerTeam1[j]);
+                }
+				else if (dis2 < 30) {
+                    (*i)->hit(playerTeam2[j]);
+                }
+                i = bullets.erase(i);
 			}
 		}
 		if (tempState == false) {
 			++i;
 		}
 	}
+    
+    count++;
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {

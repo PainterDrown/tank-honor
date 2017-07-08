@@ -37,15 +37,24 @@ static Bullet* Bullet::create(const TANK_TYPE type,
     return bullet;
 }
 
-int Bullet::calculateDamage(const Tank &tank) const {
+int Bullet::calculateDamage(const Tank *tank) const {
     static const int BASE = 1024;
-    return attack_value * (1 - (double)tank.getDefenseValue() / BASE);
+    return attack_value * (1 - (double)tank->getDefenseValue() / BASE);
 }
 
 BULLET_STATE Bullet::getState() const {
     return state;
 }
 
-void Bullet::fly() {
-    
+void Bullet::destroy() {
+    auto aimation = RepeatForever::create(Animate::create(
+        AnimationCache::getInstance()->getAnimation("bullet-boom")));
+    // aimation->setTag(11);
+    runAction(aimation);
+}
+
+void Bullet::hit(const Tank *tank) {
+    destroy();
+    int damage = calculateDamage(tank);
+    tank->hurt(damage);
 }

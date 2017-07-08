@@ -8,7 +8,6 @@
 #include "models/Tank.hpp"
 #include "models/Bullet.hpp"
 #include "models/Wall.hpp"
-#include "models/Base.hpp"
 USING_NS_CC;
 using namespace CocosDenshion;
 using namespace std;
@@ -30,7 +29,7 @@ public:
     void moveUpdate(float dt);  // 定时更新移动函数
     void moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player);  // 移动函数
     void changeControl(Tank *&player, vector<Tank*> playerTeam);  // 切换控制权
-    void wallMove();
+    void wallBeginMove();
     void addBullet(Bullet *bullet);
     
     // 键盘事件回调函数
@@ -41,14 +40,14 @@ public:
     void gameOver();                      // 游戏结束
     void loadAnimation(string filepath);  // 加载动画
     
-    void replayCallback(Ref * pSender);  // 重玩按钮响应函数
-    void exitCallback(Ref * pSender);    // 退出按钮响应函数
+    void replayCallback(Ref *pSender);  // 重玩按钮响应函数
+    void exitCallback(Ref *pSender);    // 退出按钮响应函数
 private:
-    static TankHonor* layer;
+    static TankHonor *layer;
     Size visibleSize;
     
-    SpriteFrame* frame1;
-    SpriteFrame* frame2;
+    SpriteFrame *frame1;
+    SpriteFrame *frame2;
     
 	// 辅助信息
 	bool isRMove;    // 判断是否运动
@@ -65,11 +64,12 @@ private:
 	vector<Tank*> playerTeam1;
 	vector<Tank*> playerTeam2;
 	vector<Bullet*> bullets;
-	Tank* player1, player2;
-	Wall* wall;
+	Tank *player1, *player2;
+	Wall *wall;
 	Tank *base1, *base2;
     
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
+    int timer;  // 计时器，以秒为单位
 };
 #endif
