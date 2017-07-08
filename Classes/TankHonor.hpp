@@ -1,4 +1,4 @@
-#ifndef TANK_HONOR
+﻿#ifndef TANK_HONOR
 #define TANK_HONOR
 
 #pragma execution_character_set("utf-8")

@@ -1,5 +1,8 @@
 #include "TankHonor.hpp"
 
+class Bullet;
+class Tank;
+
 TankHonor *TankHonor::layer = NULL;
 
 Scene* TankHonor::createScene() {
