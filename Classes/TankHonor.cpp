@@ -40,24 +40,45 @@ void TankHonor::addSprites() {
 	this->addChild(bg, 0);
 
 	// 添加坦克精灵
-	Tank* AITank0 = Tank::create(true, FIGHTER);
-	Tank* AITank1 = Tank::create(true, ASSASSIN);
-	Tank* AITank2 = Tank::create(true, SHOOTER);
-	AITank0->setPosition(Vec2(50, visibleSize.height / 2));
-	AITank1->setPosition(Vec2(50, visibleSize.height / 3));
-	AITank2->setPosition(Vec2(50, 2 * visibleSize.height / 3));
-	AITank0->setContentSize(Size(50, 50));
-	AITank1->setContentSize(Size(50, 50));
-	AITank2->setContentSize(Size(50, 50));
-	playerTeam1.push_back(AITank0);
-	playerTeam1.push_back(AITank1);
-	playerTeam1.push_back(AITank2);
-	this->addChild(AITank0, 2);
-	this->addChild(AITank1, 2);
-	this->addChild(AITank2, 2);
+	// 红队
+	Tank* RTank0 = Tank::create(true, FIGHTER);
+	Tank* RTank1 = Tank::create(true, ASSASSIN);
+	Tank* RTank2 = Tank::create(true, SHOOTER);
+	RTank0->setPosition(Vec2(100, 100));
+	RTank1->setPosition(Vec2(200, 100));
+	RTank2->setPosition(Vec2(300, 100));
+	RTank0->setContentSize(Size(50, 50));
+	RTank1->setContentSize(Size(50, 50));
+	RTank2->setContentSize(Size(50, 50));
+	playerTeam1.push_back(RTank0);
+	playerTeam1.push_back(RTank1);
+	playerTeam1.push_back(RTank2);
+	this->addChild(RTank0, 2);
+	this->addChild(RTank1, 2);
+	this->addChild(RTank2, 2);
 
 	// 交付控制权
-	player1 = AITank0;
+	player1 = RTank0;
+
+	// 蓝队
+	Tank* BTank0 = Tank::create(false, FIGHTER);
+	Tank* BTank1 = Tank::create(false, ASSASSIN);
+	Tank* BTank2 = Tank::create(false, SHOOTER);
+	BTank0->setPosition(Vec2(visibleSize.width - 100, 100));
+	BTank1->setPosition(Vec2(visibleSize.width - 200, 100));
+	BTank2->setPosition(Vec2(visibleSize.width - 300, 100));
+	BTank0->setContentSize(Size(50, 50));
+	BTank1->setContentSize(Size(50, 50));
+	BTank2->setContentSize(Size(50, 50));
+	playerTeam2.push_back(BTank0);
+	playerTeam2.push_back(BTank1);
+	playerTeam2.push_back(BTank2);
+	this->addChild(BTank0, 2);
+	this->addChild(BTank1, 2);
+	this->addChild(BTank2, 2);
+
+	// 交付控制权
+	player2 = BTank0;
 }
 
 void TankHonor::preloadMusic() {
@@ -105,9 +126,9 @@ void TankHonor::update(float dt) {
 	//4.移动子弹，并且判断子弹是否移出地图
 	//5.移动墙壁
 
-	wallMove();
+	// wallMove();
 
-	for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
+	/*for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
 		bool tempState = false;
 		if ((*i)->getState() == WAITING) {
 			(*i)->fly();
@@ -140,32 +161,54 @@ void TankHonor::update(float dt) {
 		if (tempState == false) {
 			++i;
 		}
-	}
+	}*/
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
     switch (code) {
 		case cocos2d::EventKeyboard::KeyCode::KEY_W:
-			isMove = true;
-			moveKey = 'W';
+			isRMove = true;
+			RMoveKey = 'W';
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_S:
-			isMove = true;
-			moveKey = 'S';
+			isRMove = true;
+			RMoveKey = 'S';
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_D:
-			isRotate = true;
-			rotateKey = 'D';
+			isRRotate = true;
+			RRotateKey = 'D';
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_A:
-			isRotate = true;
-			rotateKey = 'A';
+			isRRotate = true;
+			RRotateKey = 'A';
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_K:
-			changeControl();
+			changeControl(player1, playerTeam1);
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_J:
 			player1->setTankState(ATTACKING);
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+			isBMove = true;
+			BMoveKey = 'W';
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			isBMove = true;
+			BMoveKey = 'S';
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			isBRotate = true;
+			BRotateKey = 'D';
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			isBRotate = true;
+			BRotateKey = 'A';
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_2:
+			changeControl(player2, playerTeam2);
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_1:
+			player2->setTankState(ATTACKING);
 			break;
         default:;
     }
@@ -174,23 +217,42 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
     switch (code) {
 		case cocos2d::EventKeyboard::KeyCode::KEY_W:
-			moveKey = ' ';
-			isMove = false;
+			RMoveKey = ' ';
+			isRMove = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_S:
-			moveKey = ' ';
-			isMove = false;
+			RMoveKey = ' ';
+			isRMove = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_D:
-			rotateKey = ' ';
-			isRotate = false;
+			RRotateKey = ' ';
+			isRRotate = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_A:
-			rotateKey = ' ';
-			isRotate = false;
+			RRotateKey = ' ';
+			isRRotate = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_J:
 			player1->setTankState(NORMAL);
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+			BMoveKey = ' ';
+			isBMove = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			BMoveKey = ' ';
+			isBMove = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			BRotateKey = ' ';
+			isBRotate = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			BRotateKey = ' ';
+			isBRotate = false;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_1:
+			player2->setTankState(NORMAL);
 			break;
         default:;
     }
@@ -207,12 +269,11 @@ void TankHonor::addSchedulers() {
 
 void TankHonor::moveUpdate(float dt) {
 	// 移动
-	this->moveTank(moveKey, rotateKey, player1);
+	this->moveTank(isRMove, isRRotate, RMoveKey, RRotateKey, player1);
+	this->moveTank(isBMove, isBRotate, BMoveKey, BRotateKey, player2);
 }
 
-void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
-	auto tank = player;
-	auto nowPos = tank->getPosition();
+void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player) {
 	cocos2d::MoveTo* moveToAction = NULL;
 	cocos2d::RotateBy* rotateAction = NULL;
 	 //前后移动
@@ -220,14 +281,14 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 		switch (moveKey) {
 		case 'W':
 			moveToAction =  MoveTo::create(0.1f, Vec2(
-						player->getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90)),
-						player->getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90))));
+						player->getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation())),
+						player->getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()))));
 			player->runAction(moveToAction);
 			break;
 		case 'S':
 			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90)),
-				player->getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()) + CC_DEGREES_TO_RADIANS(90))));
+				player->getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation())),
+				player->getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()))));
 			player->runAction(moveToAction);
 			break;
 		}
@@ -244,16 +305,16 @@ void TankHonor::moveTank(char moveKey, char rotateKey, Tank* player) {
 	}
 }
 
-void TankHonor::changeControl() {
+void TankHonor::changeControl(Tank *&player, vector<Tank*> playerTeam) {
 	for (auto i = 0; i < 3; i++) {
-		auto value = playerTeam1[i]->getType();
-		auto value1 = player1->getType();
-		if (playerTeam1[i]->getType() == player1->getType()) {
+		auto value = playerTeam[i]->getType();
+		auto value1 = player->getType();
+		if (playerTeam[i]->getType() == player->getType()) {
 			if (i == 2) {
-				player1 = playerTeam1[0];
+				player = playerTeam[0];
 			}
 			else {
-				player1 = playerTeam1[i + 1];
+				player = playerTeam[i + 1];
 			}
 			break;
 		}
