@@ -18,7 +18,8 @@ enum TANK_STATE {
 enum TANK_TYPE {
     ASSASSIN,  // 刺客：血量中，伤害力高，防御力中，射程短，速度高，子弹速度中
     FIGHTER,   // 战士：血量高，伤害力中，防御力高，射程中，速度中，子弹速度低
-    SHOOTER    // 射手：血量低，伤害力低，防御力低，射程长，速度低，子弹速度高
+    SHOOTER,    // 射手：血量低，伤害力低，防御力低，射程长，速度低，子弹速度高
+	BASE		//基地：血量高，无伤害力，防御力高，无射程，无速度，无子弹
 };
 
 enum BULLET_STATE {
@@ -48,6 +49,18 @@ public:
 		tank->tankState = NORMAL;
         return tank;
     }
+
+	void setIsR(bool isr) {
+		this->isR = isr;
+	}
+
+	void setType(TANK_TYPE type) {
+		this->type = type;
+	}
+
+	void setTankState(TANK_STATE state) {
+		this->tankState = state;
+	}
     
     void bindImage() {
         string filename = "pictures/";
@@ -63,6 +76,9 @@ public:
             case TANK_TYPE::SHOOTER:
                 filename += "shooter.png";
                 break;
+			case TANK_TYPE::BASE:
+				filename += "home.png";
+				break;
             default:
                 return;
         }
@@ -152,6 +168,22 @@ private:
     // 当前的方向，x轴方向为0度，逆时针方向为正
     // 一开始R方的坦克为0度，B方的坦克为180度
     int direction;
+};
+
+class Base : public Tank {
+public:
+	static Tank* create(const bool isR = true, const TANK_TYPE type = TANK_TYPE::BASE) {
+		Base *base = new Base();
+		if (!base) {
+			return NULL;
+		}
+		base->setIsR(isR);
+		base->setType(type);
+		tank->bindImage();
+		tank->initAttributes();
+		base->setTankState(NORMAL);
+		return tank;
+	}
 };
 
 class Bullet: public Sprite {
@@ -261,6 +293,9 @@ private:
 	vector<Bullet*> bullets;
 	Tank * player1, player2;
 	Wall *wall;
+
+	//基地
+	
 
     // 显示信息
     Label *timeLabel, *scoreLabel, *info;
