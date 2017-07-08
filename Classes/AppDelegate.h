@@ -2,13 +2,17 @@
 #define  _APP_DELEGATE_H_
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
 #include <string>
+#include "TankHonor.hpp"
+#include "models/Tank.hpp"
+#include "models/Bullet.hpp"
+#include "models/Wall.hpp"
+#include "models/Base.hpp"
 using namespace std;
-/**
- @brief    The cocos2d Application.
- 
- The reason for implement as private inheritance is to hide some interface call by Director.
- */
+using namespace CocosDenshion;
+USING_NS_CC;
+
 class  AppDelegate : private cocos2d::Application {
 public:
     AppDelegate();

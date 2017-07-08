@@ -337,3 +337,7 @@ void TankHonor::exitCallback(Ref * pSender) {
     exit(0);
 #endif*/
 }
+
+void TankHonor::addBullet(Bullet *bullet) {
+    bullets.push_back(bullet);
+}
