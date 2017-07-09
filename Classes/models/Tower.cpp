@@ -22,3 +22,8 @@ void Tower::initAttributes() {
     attack_value  = 0;
     defense_value = 220;
 }
+
+void Tower::playDestroyAnimation() {
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tower"));
+    runAction(aimation);
+}

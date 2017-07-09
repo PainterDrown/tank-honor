@@ -9,7 +9,10 @@ using namespace std;
 class Tower: public Attackable {
 public:
     static Tower* create(const bool isR);
+    
     void initAttributes();
+    
+    void playDestroyAnimation();
 protected:
     bool isR;
 };

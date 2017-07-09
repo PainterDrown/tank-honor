@@ -45,7 +45,7 @@ public:
     
     void preloadMusic();                  // 预加载音乐
     void gameOver();                      // 游戏结束
-    void loadAnimation(string filepath);  // 加载动画
+    void loadAnimation();  // 加载动画
     
     void replayCallback(Ref *pSender);  // 重玩按钮响应函数
     void exitCallback(Ref *pSender);    // 退出按钮响应函数

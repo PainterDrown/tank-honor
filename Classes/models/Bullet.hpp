@@ -22,7 +22,7 @@ public:
     int calculateDamage(const Attackable *target) const;
     
     // 子弹撞到坦克，播放爆炸的同时坦克收到伤害
-    void testIfHit(Attackable *target);
+    bool testIfHit(Attackable *target);
     
     // 获取当前子弹的状态
     BULLET_STATE getState() const;
@@ -35,7 +35,7 @@ public:
     
     int getTimeToDisappear() const;
     
-    void getTank() const;
+    Tank* getTank() const;
     
 private:
     Tank *tank;

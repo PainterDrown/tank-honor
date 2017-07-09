@@ -28,3 +28,8 @@ void Dragon::initAttributes() {
         defense_value = 200;
     }
 }
+
+void Dragon::playDestroyAnimation() {
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tower"));
+    runAction(aimation);
+}

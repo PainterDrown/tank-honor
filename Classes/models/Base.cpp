@@ -22,3 +22,8 @@ void Base::initAttributes() {
     attack_value  = 0;
     defense_value = 220;
 }
+
+void Base::playDestroyAnimation() {
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-base"));
+    runAction(aimation);
+}

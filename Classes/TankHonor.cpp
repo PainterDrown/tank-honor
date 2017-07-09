@@ -109,9 +109,9 @@ void TankHonor::addSprites() {
     addChild(small_dragon);
     
     // 添加信息标签
-    label = Label::createWithTTF("Rotation: ", "fonts/fangzhengyunu.ttf", 22.0f);
-    label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-    addChild(label, 3);
+    // label = Label::createWithTTF("Rotation: ", "fonts/fangzhengyunu.ttf", 22.0f);
+    // label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    // addChild(label, 3);
 }
 
 void TankHonor::preloadMusic() {
@@ -134,7 +134,7 @@ void TankHonor::addListeners() {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
 
-void TankHonor::loadAnimation(string filepath) {
+void TankHonor::loadAnimation() {
     
 }
 
@@ -166,27 +166,46 @@ void TankHonor::update(float dt) {
         }
     }
     
-    for (auto i = bullets.begin(); i != bullets.end(); ++i) {
+    for (auto it = bullets.begin(); it != bullets.end(); ++it) {
         // 检测子弹是否应该消失
-        if ((*i)->getTimeToDisappear() == timer) {
-            (*i)->removeFromParentAndCleanup(true);
-            i = bullets.erase(i);
+        if ((*it)->getTimeToDisappear() == timer) {
+            (*it)->removeFromParentAndCleanup(true);
+            it = bullets.erase(it);
         } else {
+            auto pos = (*it)->getPosition();
+            bool hit = false;
             // 判断子弹是否撞墙
-            if (wall->getBoundingBox().containsPoint((*i)->getPosition())) {
-                (*i)->destroy();
+            if (wall->getBoundingBox().containsPoint(pos)) {
+                hit = true;
             }
-            // 判断子弹是否
-            if ((*i)->getTank()->getIsR()) {
-                
+            // 判断子弹是否撞到大小龙
+            if ((*it)->testIfHit(big_dragon));
+            else (*it)->testIfHit(small_dragon);
+            
+            // 判断子弹是否与塔、基地、地方坦克相撞
+            if ((*it)->getTank()->getIsR()) {
+                if (tower2 && (*it)->testIfHit(tower2));
+                else if ((*it)->testIfHit(base2));
+                else {
+                    for (auto t: playerTeam2) {
+                        if ((*it)->testIfHit(t)) {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (tower1 && (*it)->testIfHit(tower1));
+                else if ((*it)->testIfHit(base1));
+                else {
+                    for (auto t: playerTeam1) {
+                        if ((*it)->testIfHit(t)) {
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
-
-    // 3.判断子弹是否撞到墙壁或是坦克
-    // 4.移动子弹，并且判断子弹是否移出地图
-    // 5.移动墙壁
- //
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -304,10 +323,10 @@ void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKe
 	if (isMove || isRotate) {
 		switch (moveKey) {
 		case 'W':
-            player->move(true);
+            player->move(true, wall);
 			break;
 		case 'S':
-            player->move(false);
+            player->move(false, wall);
 			break;
 		}
 		switch (rotateKey) {
@@ -340,7 +359,7 @@ void TankHonor::removeSchedulers() {
 }
 
 void TankHonor::replayCallback(Ref * pSender) {
-    /*Director::getInstance()->replaceScene(TankHonor::createScene(::cookie));*/
+    
 }
 
 void TankHonor::exitCallback(Ref * pSender) {

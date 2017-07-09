@@ -5,7 +5,7 @@
 #include "enums.hpp"
 #include "Attackable.hpp"
 #include "Bullet.hpp"
-// #include "TankHonor.hpp"
+#include "Wall.hpp"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -37,11 +37,14 @@ public:
     
     void setState(TANK_STATE s);
     
-    void move(const bool forward);
+    void move(const bool forward, const Wall *wall);
     
     void turn(const bool leftward);
     
     void destroy();
+    
+    void playDestroyAnimation();
+
 protected:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型

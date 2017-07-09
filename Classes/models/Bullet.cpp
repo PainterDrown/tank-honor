@@ -34,11 +34,17 @@ Bullet* Bullet::create(Tank *tank) {
     return bullet;
 }
 
-void Bullet::testIfHit(Attackable *target) {
+bool Bullet::testIfHit(Attackable *target) {
     if (target->getBoundingBox().containsPoint(getPosition())) {
         destroy();
         int damage = calculateDamage(target);
         target->hurt(damage);
+        if (target->getHealthValue() <= 0) {
+            
+        }
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -66,4 +72,8 @@ void Bullet::fly(const int timer) {
 
 int Bullet::getTimeToDisappear() const {
     return timeToDisappear;
+}
+
+Tank* Bullet::getTank() const {
+    return tank;
 }

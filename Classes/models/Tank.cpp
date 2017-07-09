@@ -105,16 +105,19 @@ void Tank::destroy() {
     runAction(aimation);
 }
 
-void Tank::move(const bool forward) {
+void Tank::move(const bool forward, const Wall *wall) {
+    Vec2 nextPos;
     if (forward) {
-        auto moveToAction = MoveTo::create(0.1f, Vec2(
+        nextPos = Vec2(
             getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(getRotation())),
-            getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(getRotation()))));
-        runAction(moveToAction);
+            getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(getRotation())));
     } else {
-        auto moveToAction = MoveTo::create(0.1f, Vec2(
+        nextPos = Vec2(
             getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(getRotation())),
-            getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(getRotation()))));
+            getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(getRotation())));
+    }
+    if (!wall->getBoundingBox().containsPoint(nextPos)) {
+        auto moveToAction = MoveTo::create(0.1f, nextPos);
         runAction(moveToAction);
     }
 }
@@ -127,4 +130,9 @@ void Tank::turn(const bool leftward) {
         auto rotateAction = RotateBy::create(0.1f, 10);
         runAction(rotateAction);
     }
+}
+
+void Tank::playDestroyAnimation() {
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tank"));
+    runAction(aimation);
 }
