@@ -4,7 +4,8 @@ Bullet* Bullet::create(const TANK_TYPE type,
                        const bool isR,
                        const int attack_value,
                        const int attack_range,
-                       const int bullet_speed) {
+                       const int bullet_speed,
+                       const float rotation) {
     // 申请内存空间
     Bullet *bullet = new Bullet();
     if (!bullet) {
@@ -39,12 +40,15 @@ Bullet* Bullet::create(const TANK_TYPE type,
     bullet->attack_range = attack_range;
     bullet->bullet_speed = bullet_speed;
     
+    // 设置方向
+    bullet->setRotation(rotation);
+    
     return bullet;
 }
 
 int Bullet::calculateDamage(const Tank *tank) const {
-    static const int BASE = 1024;
-    return attack_value * (1 - (double)tank->getDefenseValue() / BASE);
+    static const int BASE_VALUE = 1024;
+    return attack_value * (1 - (double)tank->getDefenseValue() / BASE_VALUE);
 }
 
 BULLET_STATE Bullet::getState() const {
@@ -64,5 +68,9 @@ void Bullet::hit(Tank *tank) {
 }
 
 void Bullet::fly() {
-
+    float time = attack_range / bullet_speed;
+    auto moving = MoveBy::create(time,
+        Vec2(attack_range * sin(CC_DEGREES_TO_RADIANS(getRotation()),
+             attack_range * cos(CC_DEGREES_TO_RADIANS(getRotation())));
+    runAction(moving);
 }

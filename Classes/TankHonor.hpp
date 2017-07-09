@@ -16,6 +16,10 @@ USING_NS_CC;
 #include <string>
 using namespace CocosDenshion;
 
+class Tank;
+class Bullet;
+class TankHonor;
+
 class TankHonor: public Layer {
 public:
     static cocos2d::Scene* createScene();

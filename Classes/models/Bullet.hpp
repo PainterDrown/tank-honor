@@ -9,6 +9,7 @@ USING_NS_CC;
 using namespace std;
 
 class Tank;
+class TankHonor;
 
 class Bullet: public Sprite {
 public:
@@ -16,7 +17,8 @@ public:
                           const bool isR,
                           const int attack_value,
                           const int attack_range,
-                          const int bullet_speed);
+                          const int bullet_speed,
+                          const float rotation);
     
     // 计算子弹打中某只坦克后造成的伤害
     int calculateDamage(const Tank *tank) const;

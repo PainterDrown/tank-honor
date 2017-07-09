@@ -166,6 +166,18 @@ void TankHonor::update(float dt) {
         timer++;
     }
     
+    // 开炮
+    for (int i = 0; i < 3; ++i) {
+        if (playerTeam1[i]->getState() == TANK_STATE::ATTACKING) {
+            playerTeam1[i]->fire();
+        }
+    }
+    for (int i = 0; i < 3; ++i) {
+        if (playerTeam2[i]->getState() == TANK_STATE::ATTACKING) {
+            playerTeam2[i]->fire();
+        }
+    }
+    
     // 1.判断子弹是否发射，若没有发射，调用fly函数
     // 2.判断子弹是否出界
     // 3.判断子弹是否撞到墙壁或是坦克

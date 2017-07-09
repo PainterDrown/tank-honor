@@ -79,7 +79,7 @@ int Tank::getBulletSpeed() const {
     return bullet_speed;
 }
 
-TANK_STATE Tank::getTankState() const {
+TANK_STATE Tank::getState() const {
     return state;
 }
 
@@ -131,4 +131,11 @@ void Tank::turn(const bool leftward) {
         auto rotateAction = RotateBy::create(0.1f, 10);
         runAction(rotateAction);
     }
+}
+
+void Tank::fire() {
+//    Bullet *bullet = Bullet::create(type, isR, attack_value, attack_range, bullet_speed, getRotation());
+//    auto game = TankHonor::getInstance();
+//    game->addBullet(bullet);
+//    bullet->fly();
 }
