@@ -42,6 +42,11 @@ public:
     void turn(const bool leftward);
     
     void destroy();
+
+
+	bool isAmeet;   //AI是否遇到敌方坦克
+	bool isAmeetWall; //AI是否遇到墙壁
+	bool lowBlood;    //AI是否低血，以300为止
 protected:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型

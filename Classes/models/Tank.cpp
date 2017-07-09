@@ -6,6 +6,9 @@ Tank* Tank::create(const bool isR,
     if (!tank) {
         return NULL;
     }
+	tank->lowBlood = false;
+	tank->isAmeetWall = false;
+	tank->isAmeet = false;
     tank->isR = isR;
     tank->type = type;
     tank->bindImage();
