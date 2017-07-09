@@ -33,6 +33,7 @@ public:
     void removeSchedulers();  // 移除调度器
     
     void update(float dt);  // 定时更新到函数
+	void AutoTank(float dt); //fake AI
     void moveUpdate(float dt);  // 定时更新移动函数
     void moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player);  // 移动函数
     void changeControl(Tank *&player, vector<Tank*> playerTeam);  // 切换控制权

@@ -310,8 +310,67 @@ void TankHonor::addSchedulers() {
     schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.0f);
 	// 运动检测计时器
 	schedule(schedule_selector(TankHonor::moveUpdate), 0.1f, kRepeatForever, 0.0f);
+
+	schedule(schedule_selector(TankHonor::AutoTank), 0.1f, kRepeatForever, 0);
 }
 
+void TankHonor::AutoTank(float dt) {
+	bool f = false;
+	cocos2d::RotateTo* rotateAction = NULL;
+	cocos2d::MoveTo* moveToAction = NULL;
+	for (auto i : playerTeam1) {
+		if (i->getType() != player1->getType()) {
+			if (i->getHealthValue() < 300) {
+				i->lowBlood = true;
+			}else i->lowBlood = false;
+
+			if (i->getPosition().getDistance(wall->getPosition()) < (i->getAttackRange() / 10)) {
+				i->isAmeetWall = true;
+			}
+			else i->isAmeetWall = false;
+
+			for (auto j : playerTeam2) {
+				if (i->getPosition().getDistance(j->getPosition()) < (i->getAttackRange() / 10)) {
+					i->isAmeet = true;
+					f = false;
+				}
+				else f = true;
+			}
+			if (f == true) i->isAmeet = false;
+
+
+
+			if (i->lowBlood) {
+				rotateAction = RotateTo::create(0.1f, -90);
+				moveToAction = MoveTo::create(0.3f, Vec2(
+					i->getPositionX() + 30 * sin(CC_DEGREES_TO_RADIANS(i->getRotation())),
+					i->getPositionY() + 30 * cos(CC_DEGREES_TO_RADIANS(i->getRotation()))));
+				i->runAction(moveToAction);
+			}
+			else {
+				if (i->isAmeetWall) {
+					rotateAction = RotateTo::create(0.1f, 180);
+					i->runAction(rotateAction);
+					moveToAction = MoveTo::create(0.5f, Vec2(
+						i->getPositionX() + 30 * sin(CC_DEGREES_TO_RADIANS(i->getRotation())),
+						i->getPositionY() + 30 * cos(CC_DEGREES_TO_RADIANS(i->getRotation()))));
+					i->runAction(moveToAction);
+				}
+				else if (i->isAmeet) {
+
+				}
+				else {
+					rotateAction = RotateTo::create(0.1f, 90);
+					i->runAction(rotateAction);
+					moveToAction = MoveTo::create(0.3f, Vec2(
+						i->getPositionX() + 30 * sin(CC_DEGREES_TO_RADIANS(i->getRotation())),
+						i->getPositionY() + 30 * cos(CC_DEGREES_TO_RADIANS(i->getRotation()))));
+					i->runAction(moveToAction);
+				}
+			}
+		}
+	}
+}
 void TankHonor::moveUpdate(float dt) {
 	// 移动
 	this->moveTank(isRMove, isRRotate, RMoveKey, RRotateKey, player1);
