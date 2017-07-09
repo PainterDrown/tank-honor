@@ -5,12 +5,10 @@
 #include "enums.hpp"
 #include "Attackable.hpp"
 #include "Bullet.hpp"
-// #include "../TankHonor.hpp"
+// #include "TankHonor.hpp"
 #include <string>
 USING_NS_CC;
 using namespace std;
-
-class TankHonor;
 
 class Tank: public Attackable {
 public:
@@ -22,6 +20,8 @@ public:
 	void initAttributes();
     
     TANK_TYPE getType() const;
+    
+    bool getIsR() const;
     
     int getAttackRange() const;
     
@@ -37,17 +37,11 @@ public:
     
     void setState(TANK_STATE s);
     
-    void fire();
-    
     void move(const bool forward);
     
     void turn(const bool leftward);
     
-    void hurt(const int hurt);
-    
     void destroy();
-
-    
 protected:
     bool isR;        // 坦克时R方还是B方
     TANK_TYPE type;  // 坦克的类型

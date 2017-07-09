@@ -67,6 +67,10 @@ TANK_TYPE Tank::getType() const {
     return type;
 }
 
+bool Tank::getIsR() const {
+    return isR;
+}
+
 int Tank::getAttackRange() const {
     return attack_range;
 }
@@ -93,14 +97,6 @@ void Tank::setType(TANK_TYPE type) {
 
 void Tank::setState(TANK_STATE s) {
     state = s;
-}
-
-void Tank::hurt(const int damage) {
-    health_value -= damage;
-    if (health_value <= 0) {
-        health_value = 0;
-        destroy();
-    }
 }
 
 void Tank::destroy() {
@@ -131,11 +127,4 @@ void Tank::turn(const bool leftward) {
         auto rotateAction = RotateBy::create(0.1f, 10);
         runAction(rotateAction);
     }
-}
-
-void Tank::fire() {
-//    Bullet *bullet = Bullet::create(type, isR, attack_value, attack_range, bullet_speed, getRotation());
-//    auto game = TankHonor::getInstance();
-//    game->addBullet(bullet);
-//    bullet->fly();
 }

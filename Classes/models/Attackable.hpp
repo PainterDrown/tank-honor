@@ -12,6 +12,11 @@ public:
     int getAttackValue() const;
     
     int getDefenseValue() const;
+
+    void hurt(const int hurt);
+    
+    virtual void playDestroyAnimation() const;
+    
 protected:
     int health_value;    // 生命值
     int attack_value;    // 攻击力

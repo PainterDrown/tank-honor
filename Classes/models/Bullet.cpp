@@ -1,11 +1,6 @@
 #include "Bullet.hpp"
 
-Bullet* Bullet::create(const TANK_TYPE type,
-                       const bool isR,
-                       const int attack_value,
-                       const int attack_range,
-                       const int bullet_speed,
-                       const float rotation) {
+Bullet* Bullet::create(Tank *tank) {
     // 申请内存空间
     Bullet *bullet = new Bullet();
     if (!bullet) {
@@ -13,13 +8,15 @@ Bullet* Bullet::create(const TANK_TYPE type,
     }
     bullet->autorelease();
     
+    bullet->tank = tank;
+    
     // 绑定图片
     string filename;
-    if (isR)
-        filename = "R-bullet-";
+    if (tank->getIsR())
+        filename = "pictures/R-bullet-";
     else
-        filename = "B-bullet-";
-    switch (type) {
+        filename = "pictures/B-bullet-";
+    switch (tank->getType()) {
         case TANK_TYPE::ASSASSIN:
             filename += "assassin.png";
             break;
@@ -34,43 +31,39 @@ Bullet* Bullet::create(const TANK_TYPE type,
     }
     bullet->initWithFile(filename);
     
-    // 绑定属性
-    bullet->type = type;
-    bullet->attack_value = attack_value;
-    bullet->attack_range = attack_range;
-    bullet->bullet_speed = bullet_speed;
-    
-    // 设置方向
-    bullet->setRotation(rotation);
-    
     return bullet;
 }
 
-int Bullet::calculateDamage(const Tank *tank) const {
-    static const int BASE_VALUE = 1024;
-    return attack_value * (1 - (double)tank->getDefenseValue() / BASE_VALUE);
+void Bullet::testIfHit(Attackable *target) {
+    if (target->getBoundingBox().containsPoint(getPosition())) {
+        destroy();
+        int damage = calculateDamage(target);
+        target->hurt(damage);
+    }
 }
 
-BULLET_STATE Bullet::getState() const {
-    return state;
+int Bullet::calculateDamage(const Attackable *target) const {
+    static const int BASE_VALUE = 1024;
+    return tank->getAttackValue() * (1 - (double)target->getDefenseValue() / BASE_VALUE);
 }
 
 void Bullet::destroy() {
     auto aimation = RepeatForever::create(Animate::create(
         AnimationCache::getInstance()->getAnimation("bullet-boom")));
     runAction(aimation);
+    SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
+    removeFromParentAndCleanup(true);
 }
 
-void Bullet::hit(Tank *tank) {
-    destroy();
-    int damage = calculateDamage(tank);
-    tank->hurt(damage);
-}
-
-void Bullet::fly() {
-    float time = attack_range / bullet_speed;
-    auto moving = MoveBy::create(time,
-        Vec2(attack_range * sin(CC_DEGREES_TO_RADIANS(getRotation()),
-             attack_range * cos(CC_DEGREES_TO_RADIANS(getRotation())));
+void Bullet::fly(const int timer) {
+    float duration = (float)tank->getAttackRange() / (float)tank->getBulletSpeed() / 1000.0f;
+    timeToDisappear = timer + duration * 10;
+    float x = tank->getAttackRange() * sin(CC_DEGREES_TO_RADIANS(getRotation()));
+    float y = tank->getAttackRange() * cos(CC_DEGREES_TO_RADIANS(getRotation()));
+    auto moving = MoveBy::create(duration, Vec2(x, y));
     runAction(moving);
+}
+
+int Bullet::getTimeToDisappear() const {
+    return timeToDisappear;
 }

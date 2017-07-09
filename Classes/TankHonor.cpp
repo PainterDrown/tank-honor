@@ -1,19 +1,10 @@
 #include "TankHonor.hpp"
 
-class Bullet;
-class Tank;
-
-TankHonor *TankHonor::layer = NULL;
-
 Scene* TankHonor::createScene() {
     auto scene = Scene::create();
-    layer = TankHonor::create();
+    auto layer = TankHonor::create();
     scene->addChild(layer);
     return scene;
-}
-
-TankHonor* TankHonor::getInstance() {
-    return layer;
 }
 
 bool TankHonor::init() {
@@ -158,70 +149,44 @@ void TankHonor::wallBeginMove() {
 
 void TankHonor::update(float dt) {
     // 计时器
-    static int count = 0;
-    if (count == 0) {
+    timer++;
+    if (timer == 1) {
         wallBeginMove();
-    }
-    if (count % 10 == 0) {
-        timer++;
     }
     
     // 开炮
     for (int i = 0; i < 3; ++i) {
         if (playerTeam1[i]->getState() == TANK_STATE::ATTACKING) {
-            playerTeam1[i]->fire();
+            tankFire(playerTeam1[i]);
         }
     }
     for (int i = 0; i < 3; ++i) {
         if (playerTeam2[i]->getState() == TANK_STATE::ATTACKING) {
-            playerTeam2[i]->fire();
+            tankFire(playerTeam2[i]);
         }
     }
     
-    // 1.判断子弹是否发射，若没有发射，调用fly函数
-    // 2.判断子弹是否出界
+    for (auto i = bullets.begin(); i != bullets.end(); ++i) {
+        // 检测子弹是否应该消失
+        if ((*i)->getTimeToDisappear() == timer) {
+            (*i)->removeFromParentAndCleanup(true);
+            i = bullets.erase(i);
+        } else {
+            // 判断子弹是否撞墙
+            if (wall->getBoundingBox().containsPoint((*i)->getPosition())) {
+                (*i)->destroy();
+            }
+            // 判断子弹是否
+            if ((*i)->getTank()->getIsR()) {
+                
+            }
+        }
+    }
+
     // 3.判断子弹是否撞到墙壁或是坦克
     // 4.移动子弹，并且判断子弹是否移出地图
     // 5.移动墙壁
-	//for (vector<Bullet*>::iterator i = bullets.begin(); i != bullets.end();) {
-	//	bool tempState = false;
-	//	if ((*i)->getState() == WAITING) {
-	//		(*i)->fly();
-	//	}
-	//	if ((*i)->getPosition().x <= 0 || (*i)->getPosition().x > visibleSize.width || (*i)->getPosition().y <= 0 || (*i)->getPosition().y > visibleSize.height) {
-	//		(*i)->removeFromParentAndCleanup(true);
-	//		i = bullets.erase(i);
-	//		tempState = true;
-	//	}
-	//	else if (wall->getPosition().getDistance((*i)->getPosition()) < 30) {
-	//		(*i)->destroy();
-	//		(*i)->removeFromParentAndCleanup(true);
-	//		i = bullets.erase(i);
-	//		tempState = true;
-	//	}
-	//	for (int j = 0; j < 3; j++) {
-	//		//if (playerTeam1[j]->getType() == player1->getType()) { playerTeam1[j]->AI(); }
-	//		//if (playerTeam2[j]->getType() == player2->getType()) { playerTeam2[j]->AI(); }
-	//		int dis1 = playerTeam1[j]->getPosition().getDistance((*i)->getPosition());
-	//		int dis2 = playerTeam2[j]->getPosition().getDistance((*i)->getPosition());
-	//		if (dis1 < 30 || dis2 < 30) {
-	//			(*i)->removeFromParentAndCleanup(true);
-	//			tempState = true;
-	//			if (dis1 < 30) {
- //                   (*i)->hit(playerTeam1[j]);
- //               }
-	//			else if (dis2 < 30) {
- //                   (*i)->hit(playerTeam2[j]);
- //               }
- //               i = bullets.erase(i);
-	//		}
-	//	}
-	//	if (tempState == false) {
-	//		++i;
-	//	}
-	//}
- //   
-    count++;
+ //
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -323,9 +288,9 @@ void TankHonor::gameOver() {
 
 void TankHonor::addSchedulers() {
     // 添加调度器
-    schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.1f);
+    schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.0f);
 	// 运动检测计时器
-	schedule(schedule_selector(TankHonor::moveUpdate), 0.1f, kRepeatForever, 0);
+	schedule(schedule_selector(TankHonor::moveUpdate), 0.1f, kRepeatForever, 0.0f);
 }
 
 void TankHonor::moveUpdate(float dt) {
@@ -385,6 +350,13 @@ void TankHonor::exitCallback(Ref * pSender) {
 #endif*/
 }
 
-void TankHonor::addBullet(Bullet *bullet) {
+void TankHonor::tankFire(Tank* tank) {
+    Bullet *bullet = Bullet::create(tank);
+    
+    bullet->setPosition(tank->getPosition());
+    bullet->setContentSize(Size(20, 20));
+    bullet->setRotation(tank->getRotation());
+    addChild(bullet, 2);
     bullets.push_back(bullet);
+    bullet->fly(timer);
 }

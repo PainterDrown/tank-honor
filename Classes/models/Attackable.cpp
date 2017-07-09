@@ -11,3 +11,11 @@ int Attackable::getAttackValue() const {
 int Attackable::getDefenseValue() const {
     return defense_value;
 }
+
+void Attackable::hurt(const int damage) {
+    health_value -= damage;
+    if (health_value <= 0) {
+        health_value = 0;
+        destroy();
+    }
+}
