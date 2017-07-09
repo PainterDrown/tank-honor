@@ -14,6 +14,7 @@ Tank* Tank::create(const bool isR,
     tank->bindImage();
     tank->initAttributes();
     tank->setState(TANK_STATE::NORMAL);
+    
     return tank;
 }
 
@@ -122,6 +123,9 @@ void Tank::move(const bool forward, const Wall *wall) {
     if (!wall->getBoundingBox().containsPoint(nextPos)) {
         auto moveToAction = MoveTo::create(0.1f, nextPos);
         runAction(moveToAction);
+        auto labelNextPos = nextPos + Vec2(0.0f, 40.0f);
+        auto labelMoveToAction = MoveTo::create(0.1f, labelNextPos);
+        getHealthValueLabel()->runAction(labelMoveToAction);
     }
 }
 

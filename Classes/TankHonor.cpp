@@ -37,8 +37,11 @@ void TankHonor::addSprites() {
 	Tank* RTank1 = Tank::create(true, ASSASSIN);
 	Tank* RTank2 = Tank::create(true, SHOOTER);
 	RTank0->setPosition(Vec2(200.0f, visibleSize.height / 2 + 100.0f));
+    RTank0->getHealthValueLabel()->setPosition(RTank0->getPosition() + Vec2(0.0f, 40.0f));
 	RTank1->setPosition(Vec2(200.0f, visibleSize.height / 2));
+    RTank1->getHealthValueLabel()->setPosition(RTank1->getPosition() + Vec2(0.0f, 40.0f));
 	RTank2->setPosition(Vec2(200.0f, visibleSize.height / 2 - 100.0f));
+    RTank2->getHealthValueLabel()->setPosition(RTank2->getPosition() + Vec2(0.0f, 40.0f));
 	RTank0->setContentSize(Size(70, 70));
 	RTank1->setContentSize(Size(70, 70));
 	RTank2->setContentSize(Size(70, 70));
@@ -46,8 +49,11 @@ void TankHonor::addSprites() {
 	playerTeam1.push_back(RTank1);
 	playerTeam1.push_back(RTank2);
 	this->addChild(RTank0, 2);
+    this->addChild(RTank0->getHealthValueLabel(), 2);
 	this->addChild(RTank1, 2);
+    this->addChild(RTank1->getHealthValueLabel(), 2);
 	this->addChild(RTank2, 2);
+    this->addChild(RTank2->getHealthValueLabel(), 2);
 
 	// 交付控制权
 	player1 = RTank0;
@@ -57,8 +63,11 @@ void TankHonor::addSprites() {
 	Tank* BTank1 = Tank::create(false, ASSASSIN);
 	Tank* BTank2 = Tank::create(false, SHOOTER);
 	BTank0->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2 + 100.0f));
+    BTank0->getHealthValueLabel()->setPosition(BTank0->getPosition() + Vec2(0.0f, 40.0f));
 	BTank1->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2));
+    BTank1->getHealthValueLabel()->setPosition(BTank1->getPosition() + Vec2(0.0f, 40.0f));
 	BTank2->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2 - 100.0f));
+    BTank2->getHealthValueLabel()->setPosition(BTank2->getPosition() + Vec2(0.0f, 40.0f));
 	BTank0->setContentSize(Size(70, 70));
 	BTank1->setContentSize(Size(70, 70));
 	BTank2->setContentSize(Size(70, 70));
@@ -66,8 +75,11 @@ void TankHonor::addSprites() {
 	playerTeam2.push_back(BTank1);
 	playerTeam2.push_back(BTank2);
 	this->addChild(BTank0, 2);
+    this->addChild(BTank0->getHealthValueLabel(), 2);
 	this->addChild(BTank1, 2);
+    this->addChild(BTank1->getHealthValueLabel(), 2);
 	this->addChild(BTank2, 2);
+    this->addChild(BTank2->getHealthValueLabel(), 2);
 
 	// 交付控制权
 	player2 = BTank0;
@@ -303,6 +315,7 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
+    
 }
 
 void TankHonor::addSchedulers() {
@@ -371,6 +384,7 @@ void TankHonor::AutoTank(float dt) {
 		}
 	}
 }
+
 void TankHonor::moveUpdate(float dt) {
 	// 移动
 	this->moveTank(isRMove, isRRotate, RMoveKey, RRotateKey, player1);
