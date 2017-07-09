@@ -13,6 +13,7 @@ class Tank;
 class Bullet: public Sprite {
 public:
     static Bullet* create(const TANK_TYPE type,
+                          const bool isR,
                           const int attack_value,
                           const int attack_range,
                           const int bullet_speed);

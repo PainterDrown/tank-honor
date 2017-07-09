@@ -3,11 +3,8 @@
 
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
-#include <string>
 #include "TankHonor.hpp"
-#include "models/Tank.hpp"
-#include "models/Bullet.hpp"
-#include "models/Wall.hpp"
+#include <string>
 using namespace std;
 using namespace CocosDenshion;
 USING_NS_CC;

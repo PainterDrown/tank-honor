@@ -10,7 +10,7 @@ Tank* Tank::create(const bool isR,
     tank->type = type;
     tank->bindImage();
     tank->initAttributes();
-    tank->setTankState(TANK_STATE::NORMAL);
+    tank->setState(TANK_STATE::NORMAL);
     return tank;
 }
 
@@ -28,9 +28,6 @@ void Tank::bindImage() {
         case TANK_TYPE::SHOOTER:
             filename += "shooter.png";
             break;
-        case TANK_TYPE::BASE:
-            filename += "base.png";
-			break;
         default:
             return;
     }
@@ -61,12 +58,6 @@ void Tank::initAttributes() {
             attack_range  = 1000;
             moving_speed  = 30;
             break;
-        case TANK_TYPE::BASE:
-            health_value  = 2200;
-            attack_value  = 0;
-            defense_value = 220;
-            attack_range  = 0;
-            moving_speed  = 0;
         default:
             return;
     }
@@ -74,18 +65,6 @@ void Tank::initAttributes() {
 
 TANK_TYPE Tank::getType() const {
     return type;
-}
-
-int Tank::getHealthValue() const {
-    return health_value;
-}
-
-int Tank::getAttackValue() const {
-    return attack_range;
-}
-
-int Tank::getDefenseValue() const {
-    return defense_value;
 }
 
 int Tank::getAttackRange() const {
@@ -101,7 +80,7 @@ int Tank::getBulletSpeed() const {
 }
 
 TANK_STATE Tank::getTankState() const {
-    return tankState;
+    return state;
 }
 
 void Tank::setIsR(bool isr) {
@@ -112,8 +91,8 @@ void Tank::setType(TANK_TYPE type) {
     this->type = type;
 }
 
-void Tank::setTankState(TANK_STATE s) {
-    tankState = s;
+void Tank::setState(TANK_STATE s) {
+    state = s;
 }
 
 void Tank::hurt(const int damage) {
@@ -127,6 +106,29 @@ void Tank::hurt(const int damage) {
 void Tank::destroy() {
     auto aimation = RepeatForever::create(Animate::create(
         AnimationCache::getInstance()->getAnimation("tank-boom")));
-    // aimation->setTag(11);
     runAction(aimation);
+}
+
+void Tank::move(const bool forward) {
+    if (forward) {
+        auto moveToAction = MoveTo::create(0.1f, Vec2(
+            getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(getRotation())),
+            getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(getRotation()))));
+        runAction(moveToAction);
+    } else {
+        auto moveToAction = MoveTo::create(0.1f, Vec2(
+            getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(getRotation())),
+            getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(getRotation()))));
+        runAction(moveToAction);
+    }
+}
+
+void Tank::turn(const bool leftward) {
+    if (leftward) {
+        auto rotateAction = RotateBy::create(0.1f, -10);
+        runAction(rotateAction);
+    } else {
+        auto rotateAction = RotateBy::create(0.1f, 10);
+        runAction(rotateAction);
+    }
 }

@@ -23,17 +23,12 @@ bool TankHonor::init() {
     
     visibleSize = Director::getInstance()->getVisibleSize();
     timer = 0;
-	isWallDown = true;
     
 	addSprites();     // 添加背景和各种精灵
 	addListeners();   // 添加监听器
 	addSchedulers();  // 添加定时调度器
-    // preloadMusic(); // 预加载音效
-
-
-    // 添加调度器
-
-    schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.1f);
+    
+    preloadMusic();  // 预加载音效
     
     return true;
 }
@@ -50,12 +45,12 @@ void TankHonor::addSprites() {
 	Tank* RTank0 = Tank::create(true, FIGHTER);
 	Tank* RTank1 = Tank::create(true, ASSASSIN);
 	Tank* RTank2 = Tank::create(true, SHOOTER);
-	RTank0->setPosition(Vec2(100, 100));
-	RTank1->setPosition(Vec2(200, 100));
-	RTank2->setPosition(Vec2(300, 100));
-	RTank0->setContentSize(Size(50, 50));
-	RTank1->setContentSize(Size(50, 50));
-	RTank2->setContentSize(Size(50, 50));
+	RTank0->setPosition(Vec2(200.0f, visibleSize.height / 2 + 100.0f));
+	RTank1->setPosition(Vec2(200.0f, visibleSize.height / 2));
+	RTank2->setPosition(Vec2(200.0f, visibleSize.height / 2 - 100.0f));
+	RTank0->setContentSize(Size(70, 70));
+	RTank1->setContentSize(Size(70, 70));
+	RTank2->setContentSize(Size(70, 70));
 	playerTeam1.push_back(RTank0);
 	playerTeam1.push_back(RTank1);
 	playerTeam1.push_back(RTank2);
@@ -70,12 +65,12 @@ void TankHonor::addSprites() {
 	Tank* BTank0 = Tank::create(false, FIGHTER);
 	Tank* BTank1 = Tank::create(false, ASSASSIN);
 	Tank* BTank2 = Tank::create(false, SHOOTER);
-	BTank0->setPosition(Vec2(visibleSize.width - 100, 100));
-	BTank1->setPosition(Vec2(visibleSize.width - 200, 100));
-	BTank2->setPosition(Vec2(visibleSize.width - 300, 100));
-	BTank0->setContentSize(Size(50, 50));
-	BTank1->setContentSize(Size(50, 50));
-	BTank2->setContentSize(Size(50, 50));
+	BTank0->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2 + 100.0f));
+	BTank1->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2));
+	BTank2->setPosition(Vec2(visibleSize.width - 200.0f, visibleSize.height / 2 - 100.0f));
+	BTank0->setContentSize(Size(70, 70));
+	BTank1->setContentSize(Size(70, 70));
+	BTank2->setContentSize(Size(70, 70));
 	playerTeam2.push_back(BTank0);
 	playerTeam2.push_back(BTank1);
 	playerTeam2.push_back(BTank2);
@@ -86,35 +81,59 @@ void TankHonor::addSprites() {
 	// 交付控制权
 	player2 = BTank0;
     
-    // 两个基地
-	base1 = Tank::create(true, BASE);
-	base2 = Tank::create(false, BASE);
-	base1->setType(TANK_TYPE::BASE);
-    base2->setType(TANK_TYPE::BASE);
-	base1->setPosition(Vec2(100, visibleSize.height / 2));
-	base2->setPosition(Vec2(visibleSize.width - 100, visibleSize.height / 2));
-	base1->setContentSize(Size(170, 170));
-	base2->setContentSize(Size(170, 170));
-	this->addChild(base1);
-	this->addChild(base2);
+    // R基地
+    tower1 = Tower::create(true);
+    tower1->setPosition(Vec2(70, visibleSize.height / 2));
+    tower1->setContentSize(Size(180, 180));
+    addChild(tower1, 2);
+    base1 = Base::create(true);
+    base1->setPosition(Vec2(50, visibleSize.height / 2));
+    base1->setContentSize(Size(80, 80));
+    addChild(base1, 2);
+    
+    // B基地
+    tower2 = Tower::create(false);
+    tower2->setPosition(Vec2(visibleSize.width - 70.0f, visibleSize.height / 2));
+    tower2->setContentSize(Size(180, 180));
+    addChild(tower2, 2);
+    base2 = Base::create(false);
+    base2->setPosition(Vec2(visibleSize.width - 50.0f, visibleSize.height / 2));
+    base2->setContentSize(Size(80, 80));
+    addChild(base2, 2);
 
 	// 墙实例
 	wall = Wall::create();
-	wall->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	wall->setPosition(Vec2(visibleSize.width / 2, 180.0f));
+    wall->setContentSize(Size(40, 140));
 	this->addChild(wall);
+    
+    // 大龙和小龙
+    big_dragon = Dragon::create(true);
+    big_dragon->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 60.0f));
+    big_dragon->setContentSize(Size(100.0f, 100.0f));
+    addChild(big_dragon);
+    small_dragon = Dragon::create(false);
+    small_dragon->setPosition(Vec2(visibleSize.width / 2, 60.0f));
+    small_dragon->setContentSize(Size(100.0f, 100.0f));
+    addChild(small_dragon);
+    
+    // 添加信息标签
+    label = Label::createWithTTF("Rotation: ", "fonts/fangzhengyunu.ttf", 22.0f);
+    label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    addChild(label, 3);
 }
 
 void TankHonor::preloadMusic() {
-    //auto sae = SimpleAudioEngine::getInstance();
-    //
+    auto sae = SimpleAudioEngine::getInstance();
+    
     //// 加载音效
     //sae->preloadEffect("fire.mp3");
     //sae->preloadEffect("boom.mp3");
     //sae->preloadEffect("gameover.mp3");
-    //
-    //// 播放背景音乐
-    //sae->preloadBackgroundMusic("bgm.mp3");
-    //sae->playBackgroundMusic("bgm.mp3", true);
+    
+    // 播放背景音乐
+    sae->preloadBackgroundMusic("sounds/bgm.mp3");
+    sae->playBackgroundMusic("sounds/bgm.mp3", true);
 }
 
 void TankHonor::addListeners() {
@@ -128,45 +147,24 @@ void TankHonor::loadAnimation(string filepath) {
     
 }
 
-void TankHonor::wallMove() {
-	MoveBy* moveToAction;
-	if (isWallDown) {
-		moveToAction = MoveBy::create(0.1f, Vec2(0, -20));
-		wall->runAction(moveToAction);
-	}
-	else {
-		moveToAction = MoveBy::create(0.1f, Vec2(0, 20));
-		wall->runAction(moveToAction);
-	}
-	if (wall->getPosition().y < wall->getContentSize().height / 2) {
-		isWallDown = false;
-	}
-	else if (wall->getPosition().y > visibleSize.height - wall->getContentSize().height / 2) {
-		isWallDown = true;
-	}
-}
-
 void TankHonor::wallBeginMove() {
-	wall->stopAllActions();
-    float distance = visibleSize.height - wall->getContentSize().height;
+    float distance = visibleSize.height - 360.0f;
     auto moveUp = MoveBy::create(3.0f, Vec2(0, distance));
     auto moveDown = MoveBy::create(3.0f, Vec2(0, -distance));
-    auto moveUpAndDown = Sequence::create(moveDown, moveUp, NULL);
+    auto moveUpAndDown = Sequence::create(moveUp, moveDown, NULL);
     auto moveUpAndDownForever = RepeatForever::create(moveUpAndDown);
     wall->runAction(moveUpAndDownForever);
 }
 
 void TankHonor::update(float dt) {
-	wallMove();
     // 计时器
-    /*static int count = 0;
+    static int count = 0;
     if (count == 0) {
         wallBeginMove();
     }
     if (count % 10 == 0) {
         timer++;
-    }*/
-
+    }
     
     // 1.判断子弹是否发射，若没有发射，调用fly函数
     // 2.判断子弹是否出界
@@ -211,7 +209,7 @@ void TankHonor::update(float dt) {
 	//	}
 	//}
  //   
- //   count++;
+    count++;
 }
 
 void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
@@ -236,7 +234,7 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 			changeControl(player1, playerTeam1);
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_J:
-			player1->setTankState(ATTACKING);
+			player1->setState(ATTACKING);
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
 			isBMove = true;
@@ -258,7 +256,7 @@ void TankHonor::onKeyPressed(EventKeyboard::KeyCode code, Event* event) {
 			changeControl(player2, playerTeam2);
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_1:
-			player2->setTankState(ATTACKING);
+			player2->setState(ATTACKING);
 			break;
         default:;
     }
@@ -283,7 +281,7 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 			isRRotate = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_J:
-			player1->setTankState(NORMAL);
+			player1->setState(NORMAL);
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
 			BMoveKey = ' ';
@@ -302,22 +300,18 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 			isBRotate = false;
 			break;
 		case cocos2d::EventKeyboard::KeyCode::KEY_1:
-			player2->setTankState(NORMAL);
+			player2->setState(NORMAL);
 			break;
         default:;
     }
 }
 
 void TankHonor::gameOver() {
-	if (base1->getTankState() == TANK_STATE::DESTROYED) {
-
-	}
-	else if (base2->getTankState() == TANK_STATE::DESTROYED) {
-
-	}
 }
 
 void TankHonor::addSchedulers() {
+    // 添加调度器
+    schedule(schedule_selector(TankHonor::update), 0.1f, kRepeatForever, 0.1f);
 	// 运动检测计时器
 	schedule(schedule_selector(TankHonor::moveUpdate), 0.1f, kRepeatForever, 0);
 }
@@ -329,32 +323,22 @@ void TankHonor::moveUpdate(float dt) {
 }
 
 void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player) {
-	cocos2d::MoveTo* moveToAction = NULL;
-	cocos2d::RotateBy* rotateAction = NULL;
-	 //前后移动
+    // 前后移动
 	if (isMove || isRotate) {
 		switch (moveKey) {
 		case 'W':
-			moveToAction =  MoveTo::create(0.1f, Vec2(
-						player->getPositionX() + 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation())),
-						player->getPositionY() + 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()))));
-			player->runAction(moveToAction);
+            player->move(true);
 			break;
 		case 'S':
-			moveToAction = MoveTo::create(0.1f, Vec2(
-				player->getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(player->getRotation())),
-				player->getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(player->getRotation()))));
-			player->runAction(moveToAction);
+            player->move(false);
 			break;
 		}
 		switch (rotateKey) {
 		case 'A':
-			rotateAction = RotateBy::create(0.1f, (-10));
-			player->runAction(rotateAction);
+            player->turn(true);
 			break;
 		case 'D':
-			rotateAction = RotateBy::create(0.1f, (10));
-			player->runAction(rotateAction);
+            player->turn(false);
 			break;
 		}
 	}
@@ -362,8 +346,6 @@ void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKe
 
 void TankHonor::changeControl(Tank *&player, vector<Tank*> playerTeam) {
 	for (auto i = 0; i < 3; i++) {
-		auto value = playerTeam[i]->getType();
-		auto value1 = player->getType();
 		if (playerTeam[i]->getType() == player->getType()) {
 			if (i == 2) {
 				player = playerTeam[0];

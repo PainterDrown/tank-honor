@@ -1,0 +1,30 @@
+#include "Dragon.hpp"
+
+Dragon* Dragon::create(const bool isBig) {
+    Dragon *dragon = new Dragon();
+    if (!dragon) {
+        return NULL;
+    }
+    dragon->isBig = isBig;
+    string filename;
+    if (isBig) {
+        filename = "pictures/dragon-big.png";
+    } else {
+        filename = "pictures/dragon-small.png";
+    }
+    dragon->initWithFile(filename);
+    dragon->initAttributes();
+    return dragon;
+}
+
+void Dragon::initAttributes() {
+    if (isBig) {
+        health_value  = 8000;
+        attack_value  = 400;
+        defense_value = 400;
+    } else {
+        health_value  = 4000;
+        attack_value  = 200;
+        defense_value = 200;
+    }
+}

@@ -1,32 +1,37 @@
 #include "Bullet.hpp"
 
 Bullet* Bullet::create(const TANK_TYPE type,
-                      const int attack_value,
-                      const int attack_range,
-                      const int bullet_speed) {
+                       const bool isR,
+                       const int attack_value,
+                       const int attack_range,
+                       const int bullet_speed) {
     // 申请内存空间
     Bullet *bullet = new Bullet();
     if (!bullet) {
         return NULL;
     }
+    bullet->autorelease();
     
     // 绑定图片
-    switch(type) {
+    string filename;
+    if (isR)
+        filename = "R-bullet-";
+    else
+        filename = "B-bullet-";
+    switch (type) {
         case TANK_TYPE::ASSASSIN:
-            bullet->initWithFile("bullet-assassin.png");
+            filename += "assassin.png";
             break;
         case TANK_TYPE::FIGHTER:
-            bullet->initWithFile("bullet-fighter.png");
+            filename += "fighter.png";
             break;
         case TANK_TYPE::SHOOTER:
-            bullet->initWithFile("bullet-shooter.png");
+            filename += "shooter.png";
             break;
         default:
-            if (bullet) {
-                delete bullet;
-            }
             return NULL;
     }
+    bullet->initWithFile(filename);
     
     // 绑定属性
     bullet->type = type;
@@ -49,7 +54,6 @@ BULLET_STATE Bullet::getState() const {
 void Bullet::destroy() {
     auto aimation = RepeatForever::create(Animate::create(
         AnimationCache::getInstance()->getAnimation("bullet-boom")));
-    // aimation->setTag(11);
     runAction(aimation);
 }
 
