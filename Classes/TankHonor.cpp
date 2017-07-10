@@ -147,6 +147,110 @@ void TankHonor::loadAnimation() {
     
     Vector<SpriteFrame*> R_bullet_destroy;
     Vector<SpriteFrame*> B_bullet_destroy;
+	Vector<SpriteFrame*> B_assassin_destroy;
+	Vector<SpriteFrame*> R_assassin_destroy;
+	Vector<SpriteFrame*> B_base_destroy;
+	Vector<SpriteFrame*> R_base_destroy;
+	Vector<SpriteFrame*> B_fighter_destroy;
+	Vector<SpriteFrame*> R_fighter_destroy;
+	Vector<SpriteFrame*> B_shooter_destroy;
+	Vector<SpriteFrame*> R_shooter_destroy;
+	Vector<SpriteFrame*> big_dragon_destroy;
+	Vector<SpriteFrame*> small_dragon_destroy;
+
+	for (int i = 1; i <= 6; i++) {
+		sprintf(filename, "pictures/big-dragon-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 269, 269)));
+		big_dragon_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(big_dragon_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "big-dragon-destroy");
+
+
+	for (int i = 1; i <= 6; i++) {
+		sprintf(filename, "pictures/small-dragon-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 269, 269)));
+		small_dragon_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(small_dragon_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "small-dragon-destroy");
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/R-shooter-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 206, 249)));
+		R_shooter_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(R_shooter_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "R-shooter-destroy");
+
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/B-shooter-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 206, 249)));
+		B_shooter_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(B_shooter_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "B-shooter-destroy");
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/R-fighter-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 206, 249)));
+		R_fighter_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(R_fighter_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "R-fighter-destroy");
+
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/B-fighter-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 206, 249)));
+		B_fighter_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(B_fighter_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "B-fighter-destroy");
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/R-base-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 241, 241)));
+		R_base_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(R_base_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "R-base-destroy");
+
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/B-base-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 241, 241)));
+		B_base_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(B_base_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "B-base-destroy");
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/R-assassin-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 184, 241)));
+		R_assassin_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(R_assassin_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "R-assassin-destroy");
+
+	for (int i = 1; i <= 2; i++) {
+		sprintf(filename, "pictures/B-assassin-destroy-%d.png", i);
+		auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+		auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 184, 241)));
+		B_assassin_destroy.pushBack(frame);
+	}
+	Animation* animation1 = Animation::createWithSpriteFrames(B_assassin_destroy, 0.1f);
+	AnimationCache::getInstance()->addAnimation(animation1, "B-assassin-destroy");
 
     for (int i = 1; i <= 5; ++i) {
         sprintf(filename, "pictures/R-bullet-destroy-%d.png", i);
