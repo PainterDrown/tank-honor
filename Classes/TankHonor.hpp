@@ -39,6 +39,7 @@ public:
     void changeControl(Tank *&player, vector<Tank*> playerTeam);  // 切换控制权
     void wallBeginMove();
     void tankFire(Tank* tank);
+    void updateHealthValueLabel(const Attackable *target);
     
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);

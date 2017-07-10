@@ -35,8 +35,6 @@ public:
     
     void destroy();
     
-    void updateHealthValueLabel();
-    
 protected:
     int health_value_max;  // 生命值上限
     int health_value;      // 生命值

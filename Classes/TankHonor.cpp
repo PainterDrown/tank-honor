@@ -88,22 +88,30 @@ void TankHonor::addSprites() {
     // R基地
     tower1 = Tower::create(true);
     tower1->setPosition(Vec2(70, visibleSize.height / 2));
+    tower1->getHealthValueLabel()->setPosition(tower1->getPosition() + Vec2(0.0f, 40.0f));
     tower1->setContentSize(Size(180, 180));
     addChild(tower1, 2);
+    addChild(tower1->getHealthValueLabel(), 2);
     base1 = Base::create(true);
     base1->setPosition(Vec2(50, visibleSize.height / 2));
+    base1->getHealthValueLabel()->setPosition(base1->getPosition() + Vec2(0.0f, 40.0f));
     base1->setContentSize(Size(80, 80));
     addChild(base1, 2);
+    addChild(base1->getHealthValueLabel(), 2);
     
     // B基地
     tower2 = Tower::create(false);
     tower2->setPosition(Vec2(visibleSize.width - 70.0f, visibleSize.height / 2));
+    tower2->getHealthValueLabel()->setPosition(tower2->getPosition() + Vec2(0.0f, 40.0f));
     tower2->setContentSize(Size(180, 180));
     addChild(tower2, 2);
+    addChild(tower2->getHealthValueLabel(), 2);
     base2 = Base::create(false);
     base2->setPosition(Vec2(visibleSize.width - 50.0f, visibleSize.height / 2));
+    base2->getHealthValueLabel()->setPosition(base2->getPosition() + Vec2(0.0f, 40.0f));
     base2->setContentSize(Size(80, 80));
     addChild(base2, 2);
+    addChild(base2->getHealthValueLabel(), 2);
 
 	// 墙实例
 	wall = Wall::create();
@@ -114,12 +122,16 @@ void TankHonor::addSprites() {
     // 大龙和小龙
     big_dragon = Dragon::create(true);
     big_dragon->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 60.0f));
+    big_dragon->getHealthValueLabel()->setPosition(big_dragon->getPosition() + Vec2(0.0f, 40.0f));
     big_dragon->setContentSize(Size(100.0f, 100.0f));
-    addChild(big_dragon);
+    addChild(big_dragon, 2);
+    addChild(big_dragon->getHealthValueLabel(), 2);
     small_dragon = Dragon::create(false);
     small_dragon->setPosition(Vec2(visibleSize.width / 2, 60.0f));
+    small_dragon->getHealthValueLabel()->setPosition(small_dragon->getPosition() + Vec2(0.0f, 40.0f));
     small_dragon->setContentSize(Size(100.0f, 100.0f));
-    addChild(small_dragon);
+    addChild(small_dragon, 2);
+    addChild(small_dragon->getHealthValueLabel(), 2);
 }
 
 void TankHonor::preloadMusic() {
@@ -196,6 +208,7 @@ void TankHonor::update(float dt) {
         }
     }
     
+    // 判断子弹是否和某个鬼东西相撞
     for (auto it = bullets.begin(); it != bullets.end();) {
         // 检测子弹是否应该消失
         if ((*it)->getTimeToDisappear() == timer) {
@@ -214,27 +227,32 @@ void TankHonor::update(float dt) {
             }
             // 判断子弹是否撞到大小龙
             else if ((*it)->testIfHit(big_dragon)) {
+                updateHealthValueLabel(big_dragon);
                 hit = true;
                 goto DELETE_BULLET;
             }
             // 判断子弹是否撞到小龙
             else if(!hit && (*it)->testIfHit(small_dragon)) {
+                updateHealthValueLabel(small_dragon);
                 hit = true;
                 goto DELETE_BULLET;
             }
             // 判断子弹是否与塔、基地、地方坦克相撞
             else if ((*it)->getTank()->getIsR()) {
                 if (tower2 && (*it)->testIfHit(tower2)) {
+                    updateHealthValueLabel(tower2);
                     hit = true;
                     goto DELETE_BULLET;
                 }
                 else if ((*it)->testIfHit(base2)) {
+                    updateHealthValueLabel(base2);
                     hit = true;
                     goto DELETE_BULLET;
                 }
                 else {
                     for (auto t: playerTeam2) {
                         if ((*it)->testIfHit(t)) {
+                            updateHealthValueLabel(t);
                             hit = true;
                             goto DELETE_BULLET;
                         }
@@ -242,16 +260,19 @@ void TankHonor::update(float dt) {
                 }
             } else {
                 if (tower1 && (*it)->testIfHit(tower1)) {
+                    updateHealthValueLabel(tower1);
                     hit = true;
                     goto DELETE_BULLET;
                 }
                 else if ((*it)->testIfHit(base1)) {
+                    updateHealthValueLabel(base1);
                     hit = true;
                     goto DELETE_BULLET;
                 }
                 else {
                     for (auto t: playerTeam1) {
                         if ((*it)->testIfHit(t)) {
+                            updateHealthValueLabel(t);
                             hit = true;
                             goto DELETE_BULLET;
                         }
@@ -501,4 +522,28 @@ void TankHonor::tankFire(Tank* tank) {
     addChild(bullet, 2);
     bullets.push_back(bullet);
     bullet->fly(timer);
+}
+
+void TankHonor::updateHealthValueLabel(const Attackable *target) {
+    float ratio = (float)target->getHealthValue() / (float)target->getHealthValueMax();
+    auto label = target->getHealthValueLabel();
+    
+    // 显示血条
+    if      (ratio > 0.9f) label->setString("[----------]");
+    else if (ratio > 0.8f) label->setString("[--------- ]");
+    else if (ratio > 0.7f) label->setString("[--------  ]");
+    else if (ratio > 0.6f) label->setString("[-------   ]");
+    else if (ratio > 0.5f) label->setString("[------    ]");
+    else if (ratio > 0.4f) label->setString("[-----     ]");
+    else if (ratio > 0.3f) label->setString("[----      ]");
+    else if (ratio > 0.2f) label->setString("[---       ]");
+    else if (ratio > 0.1f) label->setString("[--        ]");
+    else if (ratio > 0.0f) label->setString("[-         ]");
+    else                   label->setString("[          ]");
+    
+    // 显示血条颜色
+    if      (ratio > 0.67f) label->setColor(Color3B::GREEN);
+    else if (ratio > 0.33f) label->setColor(Color3B::ORANGE);
+    else if (ratio > 0.00f) label->setColor(Color3B::RED);
+    else                    label->setColor(Color3B::BLACK);
 }
