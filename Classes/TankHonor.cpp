@@ -175,6 +175,7 @@ void TankHonor::wallBeginMove() {
     auto moveUpAndDown = Sequence::create(moveUp, moveDown, NULL);
     auto moveUpAndDownForever = RepeatForever::create(moveUpAndDown);
     wall->runAction(moveUpAndDownForever);
+	
 }
 
 void TankHonor::update(float dt) {
@@ -184,17 +185,19 @@ void TankHonor::update(float dt) {
         wallBeginMove();
     }
     
-    // 开炮
-    for (int i = 0; i < 3; ++i) {
-        if (playerTeam1[i]->getState() == TANK_STATE::ATTACKING) {
-            tankFire(playerTeam1[i]);
-        }
-    }
-    for (int i = 0; i < 3; ++i) {
-        if (playerTeam2[i]->getState() == TANK_STATE::ATTACKING) {
-            tankFire(playerTeam2[i]);
-        }
-    }
+    
+	//检测team1和team2的坦克的状态
+	for (int i = 0; i < 3; ++i) {
+		// 检测坦克的开炮状态
+		if (playerTeam1[i]->getState() == TANK_STATE::ATTACKING) {
+			tankFire(playerTeam1[i]);
+		}
+		if (playerTeam2[i]->getState() == TANK_STATE::ATTACKING) {
+			tankFire(playerTeam2[i]);
+		}
+		playerTeam1[i]->avoidWall(true, wall);
+		playerTeam2[i]->avoidWall(false, wall);
+	}
     
     for (auto it = bullets.begin(); it != bullets.end();) {
         // 检测子弹是否应该消失

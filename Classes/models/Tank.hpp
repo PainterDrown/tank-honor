@@ -45,6 +45,8 @@ public:
     
     void playDestroyAnimation();
 
+	void avoidWall(bool, const Wall*); //坦克被墙弹开
+
 	bool isAmeet;   //AI是否遇到敌方坦克
     
 	bool isAmeetWall; //AI是否遇到墙壁

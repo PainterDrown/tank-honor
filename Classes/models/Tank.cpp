@@ -109,6 +109,19 @@ void Tank::destroy() {
     runAction(aimation);
 }
 
+void Tank::avoidWall(bool side, const Wall * wall) {
+	double length = 5;
+	if (side) { length = -5; }
+	if ((wall->getBoundingBox().containsPoint(getPosition())) &&
+		(getPosition().y >= wall->getBoundingBox().getMinY() ||
+		getPosition().y <= wall->getBoundingBox().getMaxY())) {
+		MoveBy* moveAction = MoveBy::create(0.1f, Vec2(length, 0));
+		MoveBy* moveAction2 = MoveBy::create(0.1f, Vec2(length, 0));
+		runAction(moveAction);
+		getHealthValueLabel()->runAction(moveAction2);
+	}
+}
+
 void Tank::move(const bool forward, const Wall *wall) {
     Vec2 nextPos;
     if (forward) {
@@ -126,8 +139,10 @@ void Tank::move(const bool forward, const Wall *wall) {
         auto labelNextPos = nextPos + Vec2(0.0f, 40.0f);
         auto labelMoveToAction = MoveTo::create(0.1f, labelNextPos);
         getHealthValueLabel()->runAction(labelMoveToAction);
-    }
+	}
 }
+
+
 
 void Tank::turn(const bool leftward) {
     if (leftward) {
