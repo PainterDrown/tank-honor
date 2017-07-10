@@ -6,6 +6,7 @@
 #include "Attackable.hpp"
 #include "Bullet.hpp"
 #include "Wall.hpp"
+#include "Tower.hpp"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -29,6 +30,8 @@ public:
     
     int getBulletSpeed() const;
     
+    int getCD() const;
+    
     TANK_STATE getState() const;
     
     void setIsR(bool isr);
@@ -37,13 +40,17 @@ public:
     
     void setState(TANK_STATE s);
     
-    void move(const bool forward, const Wall *wall, Label *label);
+    void setCD(const int CD);
+    
+    void move(const bool forward, const Wall *wall, Label *label, const Tower *tower);
     
     void turn(const bool leftward);
     
     void playDestroyAnimation();
 
 	void avoidWall(bool, const Wall*); //坦克被墙弹开
+    
+    bool withinAttackRange(const Attackable *target);
     
     bool isAmeetBase; 
 

@@ -55,6 +55,7 @@ int Bullet::calculateDamage(const Attackable *target) const {
 }
 
 void Bullet::fly(const int timer) {
+    SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
     float duration = (float)tank->getAttackRange() / (float)tank->getBulletSpeed();
     timeToDisappear = timer + duration * 10;
     float x = tank->getAttackRange() * sin(CC_DEGREES_TO_RADIANS(getRotation()));

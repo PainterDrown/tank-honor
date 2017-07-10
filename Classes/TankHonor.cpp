@@ -154,6 +154,8 @@ void TankHonor::preloadMusic() {
     sae->preloadEffect("sounds/fire.mp3");
     sae->preloadEffect("sounds/boom.mp3");
     sae->preloadEffect("sounds/gameover.mp3");
+    sae->preloadEffect("sounds/R-comeon.mp3");
+    sae->preloadEffect("sounds/B-comeon.mp3");
     
     // 播放背景音乐
     sae->preloadBackgroundMusic("sounds/bgm.mp3");
@@ -333,7 +335,6 @@ void TankHonor::wallBeginMove() {
     auto moveUpAndDown = Sequence::create(moveUp, moveDown, NULL);
     auto moveUpAndDownForever = RepeatForever::create(moveUpAndDown);
     wall->runAction(moveUpAndDownForever);
-	
 }
 
 void TankHonor::update(float dt) {
@@ -346,6 +347,13 @@ void TankHonor::update(float dt) {
     
 	//检测team1和team2的坦克的状态
 	for (int i = 0; i < 3; ++i) {
+        // 恢复CD
+        if (playerTeam1[i]->getCD() > 0) {
+            playerTeam1[i]->setCD(playerTeam1[i]->getCD() - 1);
+        }
+        if (playerTeam2[i]->getCD() > 0) {
+            playerTeam2[i]->setCD(playerTeam2[i]->getCD() - 1);
+        }
 		// 检测坦克的开炮状态
 		if (playerTeam1[i]->getState() == TANK_STATE::ATTACKING) {
 			tankFire(playerTeam1[i]);
@@ -353,6 +361,18 @@ void TankHonor::update(float dt) {
 		if (playerTeam2[i]->getState() == TANK_STATE::ATTACKING) {
 			tankFire(playerTeam2[i]);
 		}
+        if (player1Attacking) {
+            if (player1->withinAttackRange(target1)) {
+                player1Attacking = false;
+                target1 = NULL;
+            }
+        }
+        if (player2Attacking) {
+            if (player2->withinAttackRange(target2)) {
+                player2Attacking = false;
+                target2 = NULL;
+            }
+        }
 		playerTeam1[i]->avoidWall(true, wall);
 		playerTeam2[i]->avoidWall(false, wall);
 	}
@@ -380,6 +400,7 @@ void TankHonor::update(float dt) {
                     updateHealthValueLabel(big_dragon);
                 else {
                     // 大龙爆炸
+                    SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                     string animationName = "big-dragon-destroy";
                     auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                     auto remove = CallFunc::create([&] {
@@ -400,6 +421,7 @@ void TankHonor::update(float dt) {
                     updateHealthValueLabel(small_dragon);
                 else {
                     // 大龙爆炸
+                    SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                     string animationName = "small-dragon-destroy";
                     auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                     auto remove = CallFunc::create([&] {
@@ -418,15 +440,20 @@ void TankHonor::update(float dt) {
             else if ((*it)->getTank()->getIsR()) {
                 // 子弹是否与B塔相撞
                 if ((*it)->testIfHit(tower2)) {
-                    if (tower2->getHealthValue() > 0)
+                    if (tower2->getHealthValue() > 0) {
+                        target1 = tower2;
+                        player1Attacking = true;
                         updateHealthValueLabel(tower2);
+                    }
                     else {
+                        SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                         string animationName = "B-tower-destroy";
                         auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                         auto remove = CallFunc::create([&] {
                             tower2->setContentSize(Size(0.0f, 0.0f));
                             tower2->removeFromParentAndCleanup(true);
                             labels[tower2]->removeFromParentAndCleanup(true);
+                            SimpleAudioEngine::getInstance()->playEffect("sounds/B-comeon.mp3", false);
                         });
                         auto seq = Sequence::create(animation, remove, NULL);
                         tower2->stopAllActions();
@@ -437,9 +464,13 @@ void TankHonor::update(float dt) {
                 }
                 // 子弹是否与B基地相撞
                 else if ((*it)->testIfHit(base2)) {
-                    if (base2->getHealthValue() > 0)
+                    if (base2->getHealthValue() > 0) {
+                        target1 = base2;
+                        player1Attacking = true;
                         updateHealthValueLabel(base2);
+                    }
                     else {
+                        SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                         string animationName = "B-base-destroy";
                         auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                         auto remove = CallFunc::create([&] {
@@ -458,10 +489,17 @@ void TankHonor::update(float dt) {
                 // 子弹是否与B方坦克相撞
                 else {
                     for (auto &t: playerTeam2) {
+                        if (t->getState() == TANK_STATE::DESTROYED) {
+                            continue;
+                        }
                         if ((*it)->testIfHit(t)) {
-                            if (t->getHealthValue() > 0)
+                            if (t->getHealthValue() > 0) {
+                                target1 = t;
+                                player1Attacking = true;
                                 updateHealthValueLabel(t);
+                            }
                             else {
+                                SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                                 string animationName;
                                 if (t->getType() == TANK_TYPE::ASSASSIN)
                                     animationName = "B-assassin-destroy";
@@ -478,6 +516,10 @@ void TankHonor::update(float dt) {
                                 auto seq = Sequence::create(animation, remove, NULL);
                                 t->stopAllActions();
                                 t->runAction(seq);
+                                t->setState(TANK_STATE::DESTROYED);
+                                if (t->getType() == player2->getType()) {
+                                    changeControl(player2, playerTeam2);
+                                }
                             }
                             hit = true;
                             goto DELETE_BULLET;
@@ -485,16 +527,22 @@ void TankHonor::update(float dt) {
                     }
                 }
             } else {
+                // 是否正在攻击R塔
                 if ((*it)->testIfHit(tower1)) {
-                    if (tower1->getHealthValue() > 0)
+                    if (tower1->getHealthValue() > 0) {
+                        target2 = tower1;
+                        player2Attacking = true;
                         updateHealthValueLabel(tower1);
+                    }
                     else {
+                        SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                         string animationName = "R-tower-destroy";
                         auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                         auto remove = CallFunc::create([&] {
                             tower1->setContentSize(Size(0.0f, 0.0f));
                             tower1->removeFromParentAndCleanup(true);
                             labels[tower1]->removeFromParentAndCleanup(true);
+                            SimpleAudioEngine::getInstance()->playEffect("sounds/R-comeon.mp3", false);
                         });
                         auto seq = Sequence::create(animation, remove, NULL);
                         tower1->stopAllActions();
@@ -503,10 +551,15 @@ void TankHonor::update(float dt) {
                     hit = true;
                     goto DELETE_BULLET;
                 }
+                // 是否在攻击R基地
                 else if ((*it)->testIfHit(base1)) {
-                    if (base1->getHealthValue() > 0)
+                    if (base1->getHealthValue() > 0) {
+                        target2 = base1;
+                        player2Attacking = true;
                         updateHealthValueLabel(base1);
+                    }
                     else {
+                        SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                         string animationName = "R-base-destroy";
                         auto animation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
                         auto remove = CallFunc::create([&] {
@@ -521,12 +574,20 @@ void TankHonor::update(float dt) {
                     hit = true;
                     goto DELETE_BULLET;
                 }
+                // 是否正在攻击R方坦克
                 else {
                     for (auto &t: playerTeam1) {
+                        if (t->getState() == TANK_STATE::DESTROYED) {
+                            continue;
+                        }
                         if ((*it)->testIfHit(t)) {
-                            if (t->getHealthValue() > 0)
+                            if (t->getHealthValue() > 0) {
+                                target2 = t;
+                                player2Attacking = true;
                                 updateHealthValueLabel(t);
+                            }
                             else {
+                                SimpleAudioEngine::getInstance()->playEffect("sounds/boom.mp3", false);
                                 string animationName;
                                 if (t->getType() == TANK_TYPE::ASSASSIN)
                                     animationName = "R-assassin-destroy";
@@ -543,6 +604,10 @@ void TankHonor::update(float dt) {
                                 auto seq = Sequence::create(animation, remove, NULL);
                                 t->stopAllActions();
                                 t->runAction(seq);
+                                t->setState(TANK_STATE::DESTROYED);
+                                if (t->getType() == player1->getType()) {
+                                    changeControl(player1, playerTeam1);
+                                }
                             }
                             hit = true;
                             goto DELETE_BULLET;
@@ -567,7 +632,6 @@ void TankHonor::update(float dt) {
                 auto seq = Sequence::create(animation, removeBullet, NULL);
                 (*it)->stopAllActions();
                 (*it)->runAction(seq);
-                SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
                 it = bullets.erase(it);
             } else {
                 ++it;
@@ -691,12 +755,13 @@ void TankHonor::AutoTank1(float dt) {
     cocos2d::RotateTo* rotateAction = NULL;
     cocos2d::MoveTo* moveToAction = NULL;
     for (auto i : playerTeam1) {
+        if (i->getState() == TANK_STATE::DESTROYED) break;
         if (i->getType() != player1->getType()) {
             if (i->getHealthValue() < 300) {
                 i->lowBlood = true;
             }else i->lowBlood = false;
             
-            if (i->getPosition().getDistance(base2->getPosition()) < 50) {
+            if (i->withinAttackRange(base2)) {
                 i->isAmeetBase = true;
                 i->isAmeet = true;
                 Point shoot = base2->getPosition() - i->getPosition();
@@ -706,13 +771,13 @@ void TankHonor::AutoTank1(float dt) {
             }
             else i->isAmeetBase = false;
             
-            if (i->getPosition().getDistance(wall->getPosition()) < (i->getAttackRange() / 10)) {
+            if (i->getPosition().getDistance(wall->getPosition()) < 50) {
                 i->isAmeetWall = true;
             }
             else i->isAmeetWall = false;
             
             for (auto j : playerTeam2) {
-                if (i->getPosition().getDistance(j->getPosition()) < 50) {
+                if (i->withinAttackRange(j)) {
                     i->isAmeet = true;
                     Point shoot = j->getPosition() - i->getPosition();
                     Point n = ccpNormalize(shoot);
@@ -723,17 +788,28 @@ void TankHonor::AutoTank1(float dt) {
                 else f = true;
             }
             if (f == true) i->isAmeet = false;
-            
-            if (i->getPositionX() < player1->getPositionX()) {
+            if (i->getPositionX() <= player1->getPositionX()) {
                 if (i->lowBlood) {
                     rotateAction = RotateTo::create(0.1f, -90);
-                    i->move(true, wall, labels[i]);
+                    i->move(true, wall, labels[i], tower2);
+                } else  if(player1Attacking) {
+                    if(i->withinAttackRange(target1)){
+                        tankFire(i);
+                    }else {
+                        Point shoot = target1->getPosition() - i->getPosition();
+                        Point n = ccpNormalize(shoot);
+                        float r = atan2(n.y, -n.x);
+                        d = CC_RADIANS_TO_DEGREES(r);
+                        rotateAction = RotateTo::create(0.1f, d - 90);
+                        i->runAction(rotateAction);
+                        i->move(true, wall, labels[i], tower2);
+                    }
                 }
                 else {
                     if (i->isAmeetWall) {
                         rotateAction = RotateTo::create(0.1f, 180);
                         i->runAction(rotateAction);
-                        i->move(true, wall, labels[i]);
+                        i->move(true, wall, labels[i], tower2);
 
                     }
                     else if (i->isAmeet) {
@@ -755,12 +831,12 @@ void TankHonor::AutoTank1(float dt) {
                             }
                             else rotateAction = RotateTo::create(0.1f, 0);
                             i->runAction(rotateAction);
-                            i->move(true, wall, labels[i]);
+                            i->move(true, wall, labels[i], tower2);
                         }
                         else {
                             rotateAction = RotateTo::create(0.1f, 90);
                             i->runAction(rotateAction);
-                            i->move(true, wall, labels[i]);
+                            i->move(true, wall, labels[i], tower2);
                         }
                     }
                 }
@@ -774,12 +850,13 @@ void TankHonor::AutoTank2(float dt) {
     bool f = false;
     cocos2d::RotateTo* rotateAction = NULL;
     for (auto i : playerTeam2) {
+        if (i->getState() == TANK_STATE::DESTROYED) break;
         if (i->getType() != player2->getType()) {
             if (i->getHealthValue() < 300) {
                 i->lowBlood = true;
             }else i->lowBlood = false;
             
-            if (i->getPosition().getDistance(base1->getPosition()) < (i->getAttackRange() / 10)) {
+            if (i->withinAttackRange(base1)) {
                 i->isAmeetBase = true;
                 Point shoot = base1->getPosition() - i->getPosition();
                 Point n = ccpNormalize(shoot);
@@ -788,13 +865,13 @@ void TankHonor::AutoTank2(float dt) {
             }
             else i->isAmeetBase = false;
             
-            if (i->getPosition().getDistance(wall->getPosition()) < (i->getAttackRange() / 10)) {
+            if (i->getPosition().getDistance(wall->getPosition()) < 50) {
                 i->isAmeetWall = true;
             }
             else i->isAmeetWall = false;
             
             for (auto j : playerTeam1) {
-                if (i->getPosition().getDistance(j->getPosition()) < (i->getAttackRange() / 10)) {
+                if (i->withinAttackRange(j)) {
                     i->isAmeet = true;
                     Point shoot = j->getPosition() - i->getPosition();
                     Point n = ccpNormalize(shoot);
@@ -806,16 +883,30 @@ void TankHonor::AutoTank2(float dt) {
             }
             if (f == true) i->isAmeet = false;
             
-            if (i->getPositionX() > player2->getPositionX()) {
+            if (i->getPositionX() >= player2->getPositionX()) {
                 if (i->lowBlood) {
                     rotateAction = RotateTo::create(0.1f, 90);
-                    i->move(true, wall, labels[i]);
+                    i->move(true, wall, labels[i], tower1);
                 }
+                else  if(player2Attacking) {
+                    if(i->withinAttackRange(target2)){
+                        tankFire(i);
+                    }else {
+                        Point shoot = target2->getPosition() - i->getPosition();
+                        Point n = ccpNormalize(shoot);
+                        float r = atan2(n.y, -n.x);
+                        d = CC_RADIANS_TO_DEGREES(r);
+                        rotateAction = RotateTo::create(0.1f, d - 90);
+                        i->runAction(rotateAction);
+                        i->move(true, wall, labels[i], tower1);
+                    }
+                }
+
                 else {
                     if (i->isAmeetWall) {
                         rotateAction = RotateTo::create(0.1f, 180);
                         i->runAction(rotateAction);
-                        i->move(true, wall, labels[i]);
+                        i->move(true, wall, labels[i], tower1);
                     }
                     else if (i->isAmeet) {
                         rotateAction = RotateTo::create(0.1f, d - 90);
@@ -836,12 +927,12 @@ void TankHonor::AutoTank2(float dt) {
                             }
                             else rotateAction = RotateTo::create(0.1f, 0);
                             i->runAction(rotateAction);
-                            i->move(true, wall, labels[i]);
+                            i->move(true, wall, labels[i], tower1);
                         }
                         else {
                             rotateAction = RotateTo::create(0.1f, -90);
                             i->runAction(rotateAction);
-                            i->move(true, wall, labels[i]);
+                            i->move(true, wall, labels[i], tower1);
                         }
                     }
                 }
@@ -861,10 +952,10 @@ void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKe
 	if (isMove || isRotate) {
 		switch (moveKey) {
 		case 'W':
-            player->move(true, wall, labels[player]);
+                player->move(true, wall, labels[player], player->getIsR()? tower2 : tower1);
 			break;
 		case 'S':
-            player->move(false, wall, labels[player]);
+            player->move(false, wall, labels[player], player->getIsR()? tower2 : tower1);
 			break;
 		}
 		switch (rotateKey) {
@@ -879,17 +970,18 @@ void TankHonor::moveTank(bool isMove, bool isRotate, char moveKey, char rotateKe
 }
 
 void TankHonor::changeControl(Tank *&player, vector<Tank*> playerTeam) {
-	for (auto i = 0; i < 3; i++) {
-		if (playerTeam[i]->getType() == player->getType()) {
-			if (i == 2) {
-				player = playerTeam[0];
-			}
-			else {
-				player = playerTeam[i + 1];
-			}
-			break;
-		}
-	}
+    for (int i = 0; i < 3; ++i) {
+        if (playerTeam[i]->getType() == player->getType()) {
+            if (playerTeam[(i + 1) % 3]->getState() != TANK_STATE::DESTROYED)
+                player = playerTeam[(i + 1) % 3];
+            else if (playerTeam[(i + 2) % 3]->getState() != TANK_STATE::DESTROYED)
+                player = playerTeam[(i + 2) % 3];
+            else if (player->getState() == TANK_STATE::DESTROYED) {
+                gameOver();
+            } else;
+            break;
+        }
+    }
 }
 
 void TankHonor::removeSchedulers() {
@@ -908,14 +1000,15 @@ void TankHonor::exitCallback(Ref * pSender) {
 }
 
 void TankHonor::tankFire(Tank* tank) {
-    Bullet *bullet = Bullet::create(tank);
-    
-    bullet->setPosition(tank->getPosition());
-    // bullet->setContentSize(Size(20, 20));
-    bullet->setRotation(tank->getRotation());
-    addChild(bullet, 2);
-    bullets.push_back(bullet);
-    bullet->fly(timer);
+    if (tank->getCD() == 0) {
+        Bullet *bullet = Bullet::create(tank);
+        bullet->setPosition(tank->getPosition());
+        bullet->setRotation(tank->getRotation());
+        addChild(bullet, 2);
+        bullets.push_back(bullet);
+        bullet->fly(timer);
+        tank->setCD(10);
+    }
 }
 
 void TankHonor::updateHealthValueLabel(Attackable *target) {

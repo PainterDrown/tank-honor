@@ -42,7 +42,7 @@ public:
     void wallBeginMove();
     void tankFire(Tank* tank);
     void updateHealthValueLabel(Attackable *target);
-    Label *createHealthValueLabel();
+    Label* createHealthValueLabel();
     void gameOver();                      // 游戏结束
     
     // 键盘事件回调函数
@@ -78,6 +78,8 @@ private:
 	Wall *wall;
 	Base *base1, *base2;
     Tower *tower1, *tower2;
+    Attackable *target1, *target2;
+    bool player1Attacking, player2Attacking;
     
     // 大龙和小龙
     Dragon *big_dragon, *small_dragon;

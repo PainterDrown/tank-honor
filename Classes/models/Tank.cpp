@@ -41,27 +41,27 @@ void Tank::bindImage() {
 
 void Tank::initAttributes() {
     bullet_speed = 500;
-    CD = 10;  // 每隔1秒才能射一发子弹
+    CD = 0;  // 每隔1秒才能射一发子弹
     switch(type) {
         case TANK_TYPE::ASSASSIN:
             health_value  = health_value_max = 800;
             attack_value  = 200;
             defense_value = 150;
-            attack_range  = 200;
+            attack_range  = 120;
             moving_speed  = 50;
             break;
         case TANK_TYPE::FIGHTER:
             health_value  = health_value_max  = 1000;
             attack_value  = 150;
             defense_value = 200;
-            attack_range  = 300;
+            attack_range  = 160;
             moving_speed  = 40;
             break;
         case TANK_TYPE::SHOOTER:
             health_value  = health_value_max  = 600;
             attack_value  = 100;
             defense_value = 100;
-            attack_range  = 400;
+            attack_range  = 200;
             moving_speed  = 30;
             break;
         default:
@@ -89,6 +89,10 @@ int Tank::getBulletSpeed() const {
     return bullet_speed;
 }
 
+int Tank::getCD() const {
+    return CD;
+}
+
 TANK_STATE Tank::getState() const {
     return state;
 }
@@ -105,6 +109,10 @@ void Tank::setState(TANK_STATE s) {
     state = s;
 }
 
+void Tank::setCD(const int CD) {
+    this->CD = CD;
+}
+
 void Tank::avoidWall(bool side, const Wall * wall) {
 	double length = 5;
 	if (side) { length = -5; }
@@ -116,7 +124,7 @@ void Tank::avoidWall(bool side, const Wall * wall) {
 	}
 }
 
-void Tank::move(const bool forward, const Wall *wall, Label *label) {
+void Tank::move(const bool forward, const Wall *wall, Label *label, const Tower *tower) {
     Vec2 nextPos;
     if (forward) {
         nextPos = Vec2(
@@ -127,7 +135,8 @@ void Tank::move(const bool forward, const Wall *wall, Label *label) {
             getPositionX() - 10 * sin(CC_DEGREES_TO_RADIANS(getRotation())),
             getPositionY() - 10 * cos(CC_DEGREES_TO_RADIANS(getRotation())));
     }
-    if (!wall->getBoundingBox().containsPoint(nextPos)) {
+    if (!wall->getBoundingBox().containsPoint(nextPos) &&
+        !tower->getBoundingBox().containsPoint(nextPos)) {
         auto moveToAction = MoveTo::create(0.1f, nextPos);
         runAction(moveToAction);
         auto labelNextPos = nextPos + Vec2(0.0f, 40.0f);
@@ -165,4 +174,8 @@ void Tank::playDestroyAnimation() {
     }
     auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
+}
+
+bool Tank::withinAttackRange(const Attackable *target) {
+    return getPosition().getDistance(target->getPosition()) < getAttackRange() - 30;
 }
