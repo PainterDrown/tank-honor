@@ -1050,6 +1050,6 @@ void TankHonor::showHelp() {
     addChild(player1help, 1);
     auto player2help = Label::createWithTTF(help2, "fonts/fangzhengyunu.ttf", 22.0f);
     player2help->setColor(Color3B::GRAY);
-    player2help->setPosition(Vec2(visibleSize.width - 10, visibleSize.height - 70));
+    player2help->setPosition(Vec2(visibleSize.width - 120, visibleSize.height - 70));
     addChild(player2help, 1);
 }
