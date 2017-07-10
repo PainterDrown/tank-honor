@@ -6,6 +6,7 @@ Tank* Tank::create(const bool isR,
     if (!tank) {
         return NULL;
     }
+    tank->isAmeetBase = false;
 	tank->lowBlood = false;
 	tank->isAmeetWall = false;
 	tank->isAmeet = false;
@@ -39,27 +40,28 @@ void Tank::bindImage() {
 }
 
 void Tank::initAttributes() {
-    bullet_speed = 1;  // 1000/ms
+    bullet_speed = 500;
+    CD = 10;  // 每隔1秒才能射一发子弹
     switch(type) {
         case TANK_TYPE::ASSASSIN:
             health_value  = health_value_max = 800;
             attack_value  = 200;
             defense_value = 150;
-            attack_range  = 1000;
+            attack_range  = 200;
             moving_speed  = 50;
             break;
         case TANK_TYPE::FIGHTER:
             health_value  = health_value_max  = 1000;
             attack_value  = 150;
             defense_value = 200;
-            attack_range  = 700;
+            attack_range  = 300;
             moving_speed  = 40;
             break;
         case TANK_TYPE::SHOOTER:
             health_value  = health_value_max  = 600;
             attack_value  = 100;
             defense_value = 100;
-            attack_range  = 1000;
+            attack_range  = 400;
             moving_speed  = 30;
             break;
         default:
@@ -103,12 +105,6 @@ void Tank::setState(TANK_STATE s) {
     state = s;
 }
 
-void Tank::destroy() {
-    auto aimation = RepeatForever::create(Animate::create(
-        AnimationCache::getInstance()->getAnimation("tank-boom")));
-    runAction(aimation);
-}
-
 void Tank::avoidWall(bool side, const Wall * wall) {
 	double length = 5;
 	if (side) { length = -5; }
@@ -116,13 +112,11 @@ void Tank::avoidWall(bool side, const Wall * wall) {
 		(getPosition().y >= wall->getBoundingBox().getMinY() ||
 		getPosition().y <= wall->getBoundingBox().getMaxY())) {
 		MoveBy* moveAction = MoveBy::create(0.1f, Vec2(length, 0));
-		MoveBy* moveAction2 = MoveBy::create(0.1f, Vec2(length, 0));
 		runAction(moveAction);
-		getHealthValueLabel()->runAction(moveAction2);
 	}
 }
 
-void Tank::move(const bool forward, const Wall *wall) {
+void Tank::move(const bool forward, const Wall *wall, Label *label) {
     Vec2 nextPos;
     if (forward) {
         nextPos = Vec2(
@@ -138,11 +132,9 @@ void Tank::move(const bool forward, const Wall *wall) {
         runAction(moveToAction);
         auto labelNextPos = nextPos + Vec2(0.0f, 40.0f);
         auto labelMoveToAction = MoveTo::create(0.1f, labelNextPos);
-        getHealthValueLabel()->runAction(labelMoveToAction);
+        label->runAction(labelMoveToAction);
 	}
 }
-
-
 
 void Tank::turn(const bool leftward) {
     if (leftward) {
@@ -155,6 +147,22 @@ void Tank::turn(const bool leftward) {
 }
 
 void Tank::playDestroyAnimation() {
-    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tank"));
+    string animationName;
+    if (isR) animationName = "R-";
+    else     animationName = "B-";
+    switch (type) {
+        case TANK_TYPE::ASSASSIN:
+            animationName += "assassin-destroy";
+            break;
+        case TANK_TYPE::FIGHTER:
+            animationName += "fighter-destroy";
+            break;
+        case TANK_TYPE::SHOOTER:
+            animationName += "shooter-destroy";
+            break;
+        default:
+            return;
+    }
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
 }

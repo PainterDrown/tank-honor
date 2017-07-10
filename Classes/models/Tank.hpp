@@ -37,15 +37,15 @@ public:
     
     void setState(TANK_STATE s);
     
-    void move(const bool forward, const Wall *wall);
+    void move(const bool forward, const Wall *wall, Label *label);
     
     void turn(const bool leftward);
-    
-    void destroy();
     
     void playDestroyAnimation();
 
 	void avoidWall(bool, const Wall*); //坦克被墙弹开
+    
+    bool isAmeetBase; 
 
 	bool isAmeet;   //AI是否遇到敌方坦克
     
@@ -61,6 +61,7 @@ protected:
     int attack_range;    // 射程
     int moving_speed;    // 移动速度
     int bullet_speed;    // 子弹速度
+    int CD;              // 技能冷却时间
 };
 
 #endif

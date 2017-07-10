@@ -17,6 +17,7 @@ using namespace CocosDenshion;
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 using namespace std;
 
 
@@ -33,20 +34,22 @@ public:
     void removeSchedulers();  // 移除调度器
     
     void update(float dt);  // 定时更新到函数
-	void AutoTank(float dt); //fake AI
+	void AutoTank1(float dt); //fake AI
+    void AutoTank2(float dt); //fake AI
     void moveUpdate(float dt);  // 定时更新移动函数
     void moveTank(bool isMove, bool isRotate, char moveKey, char rotateKey, Tank* player);  // 移动函数
     void changeControl(Tank *&player, vector<Tank*> playerTeam);  // 切换控制权
     void wallBeginMove();
     void tankFire(Tank* tank);
-    void updateHealthValueLabel(const Attackable *target);
+    void updateHealthValueLabel(Attackable *target);
+    Label *createHealthValueLabel();
+    void gameOver();                      // 游戏结束
     
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
     void onKeyReleased(EventKeyboard::KeyCode code, Event * event);
     
     void preloadMusic();                  // 预加载音乐
-    void gameOver();                      // 游戏结束
     void loadAnimation();  // 加载动画
     
     void replayCallback(Ref *pSender);  // 重玩按钮响应函数
@@ -79,8 +82,22 @@ private:
     // 大龙和小龙
     Dragon *big_dragon, *small_dragon;
     
-    // 显示信息
-    Label *label;
-    int timer;  // 计时器，以100ms为单位
+    // 计时器，以100ms为单位
+    int timer;
+    
+    // 血条
+    map<Attackable*, Label*> labels;
+//    Label *RTank0_label,
+//          *RTank1_label,
+//          *RTank2_label,
+//          *BTank0_label,
+//          *BTank1_label,
+//          *BTank2_label,
+//          *RTower_label,
+//          *BTower_label,
+//          *RBase_label,
+//          *BBase_label,
+//          *big_dragon_label,
+//          *small_dragon_label;
 };
 #endif

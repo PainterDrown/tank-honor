@@ -24,6 +24,9 @@ void Tower::initAttributes() {
 }
 
 void Tower::playDestroyAnimation() {
-    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tower"));
+    string animationName;
+    if (isR) animationName = "R-tower-destroy";
+    else     animationName = "B-tower-destroy";
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
 }

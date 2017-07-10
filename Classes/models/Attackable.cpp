@@ -1,10 +1,5 @@
 #include "Attackable.hpp"
 
-Attackable::Attackable() {
-    health_value_label = Label::createWithTTF("[----------]", "fonts/fangzhengyunu.ttf", 10.0f);
-    health_value_label->setColor(Color3B::GREEN);
-}
-
 int Attackable::getHealthValueMax() const {
     return health_value_max;
 }
@@ -19,10 +14,6 @@ int Attackable::getAttackValue() const {
 
 int Attackable::getDefenseValue() const {
     return defense_value;
-}
-
-Label* Attackable::getHealthValueLabel() const {
-    return health_value_label;
 }
 
 void Attackable::setHealthValueMax(const int v) {
@@ -43,14 +34,4 @@ void Attackable::setDefenseValue(const int v) {
 
 void Attackable::hurt(const int damage) {
     health_value -= damage;
-    if (health_value <= 0) {
-        health_value = 0;
-        destroy();
-    }
-}
-
-void Attackable::destroy() {
-    playDestroyAnimation();
-    SimpleAudioEngine::getInstance()->playEffect("sounds/destroy.mp3", false);
-    removeFromParentAndCleanup(true);
 }

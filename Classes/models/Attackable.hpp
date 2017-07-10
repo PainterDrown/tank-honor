@@ -8,9 +8,7 @@ USING_NS_CC;
 using namespace CocosDenshion;
 
 class Attackable: public Sprite {
-public:
-    Attackable();
-    
+public:    
     int getHealthValueMax() const;
     
     int getHealthValue() const;
@@ -18,8 +16,6 @@ public:
     int getAttackValue() const;
     
     int getDefenseValue() const;
-    
-    Label* getHealthValueLabel() const;
     
     void setHealthValueMax(const int v);
     
@@ -40,7 +36,6 @@ protected:
     int health_value;      // 生命值
     int attack_value;      // 攻击力
     int defense_value;     // 防御力
-    Label *health_value_label;
 };
 
 #endif

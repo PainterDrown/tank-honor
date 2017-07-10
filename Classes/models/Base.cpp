@@ -24,6 +24,9 @@ void Base::initAttributes() {
 }
 
 void Base::playDestroyAnimation() {
-    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-base"));
+    string animationName;
+    if (isR) animationName = "R-base-destroy";
+    else     animationName = "B-base-destroy";
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
 }

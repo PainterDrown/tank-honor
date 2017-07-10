@@ -13,7 +13,9 @@ public:
     void initAttributes();
     
     void playDestroyAnimation();
+    
 protected:
+    
     bool isR;
 };
 

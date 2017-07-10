@@ -8,9 +8,9 @@ Dragon* Dragon::create(const bool isBig) {
     dragon->isBig = isBig;
     string filename;
     if (isBig) {
-        filename = "pictures/dragon-big.png";
+        filename = "pictures/big-dragon.png";
     } else {
-        filename = "pictures/dragon-small.png";
+        filename = "pictures/small-dragon.png";
     }
     dragon->initWithFile(filename);
     dragon->initAttributes();
@@ -30,6 +30,9 @@ void Dragon::initAttributes() {
 }
 
 void Dragon::playDestroyAnimation() {
-    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation("destroy-tower"));
+    string animationName;
+    if (isBig) animationName = "big-dragon-destroy";
+    else       animationName = "small-dragon-destroy";
+    auto aimation = Animate::create(AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
 }

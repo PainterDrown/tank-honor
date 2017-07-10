@@ -30,9 +30,6 @@ public:
     // 让子弹飞
     void fly(const int timer);
     
-    // 播放子弹爆炸动画
-    void destroy();
-    
     int getTimeToDisappear() const;
     
     Tank* getTank() const;

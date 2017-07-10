@@ -35,10 +35,7 @@ Bullet* Bullet::create(Tank *tank) {
 }
 
 bool Bullet::testIfHit(Attackable *target) {
-    auto t = target->getBoundingBox();
-    auto p = getPosition();
-    auto c = t.containsPoint(p);
-    if (c) {
+    if (target->getBoundingBox().containsPoint(getPosition())) {
         int damage = calculateDamage(target);
         target->hurt(damage);
         if (target->getHealthValue() <= 0) {
@@ -46,7 +43,6 @@ bool Bullet::testIfHit(Attackable *target) {
             tank->setAttackValue(tank->getAttackValue() + 100);
             tank->setDefenseValue(tank->getDefenseValue() + 100);
         }
-        destroy();
         return true;
     } else {
         return false;
@@ -58,21 +54,8 @@ int Bullet::calculateDamage(const Attackable *target) const {
     return tank->getAttackValue() * (1 - (double)target->getDefenseValue() / BASE_VALUE);
 }
 
-void Bullet::destroy() {
-    string animationName;
-    if (tank->getIsR()) {
-        animationName = "R-bullet-destroy";
-    } else {
-        animationName = "B-bullet-destroy";
-    }
-    auto aimation = Animate::create(
-        AnimationCache::getInstance()->getAnimation(animationName));
-    runAction(aimation);
-    SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
-}
-
 void Bullet::fly(const int timer) {
-    float duration = (float)tank->getAttackRange() / (float)tank->getBulletSpeed() / 1000.0f;
+    float duration = (float)tank->getAttackRange() / (float)tank->getBulletSpeed();
     timeToDisappear = timer + duration * 10;
     float x = tank->getAttackRange() * sin(CC_DEGREES_TO_RADIANS(getRotation()));
     float y = tank->getAttackRange() * cos(CC_DEGREES_TO_RADIANS(getRotation()));
