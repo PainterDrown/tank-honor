@@ -196,12 +196,14 @@ void TankHonor::update(float dt) {
         }
     }
     
-    for (auto it = bullets.begin(); it != bullets.end(); ++it) {
+    for (auto it = bullets.begin(); it != bullets.end();) {
         // 检测子弹是否应该消失
         if ((*it)->getTimeToDisappear() == timer) {
             (*it)->removeFromParentAndCleanup(true);
             it = bullets.erase(it);
-        } else {
+        }
+        // 检测子弹是否与可攻击的物体碰撞
+        else {
             auto pos = (*it)->getPosition();
             bool hit = false;
             
@@ -226,30 +228,43 @@ void TankHonor::update(float dt) {
                     hit = true;
                     goto DELETE_BULLET;
                 }
-                else if ((*it)->testIfHit(base2));
+                else if ((*it)->testIfHit(base2)) {
+                    hit = true;
+                    goto DELETE_BULLET;
+                }
                 else {
                     for (auto t: playerTeam2) {
                         if ((*it)->testIfHit(t)) {
-                            break;
+                            hit = true;
+                            goto DELETE_BULLET;
                         }
                     }
                 }
             } else {
-                if (tower1 && (*it)->testIfHit(tower1));
-                else if ((*it)->testIfHit(base1));
+                if (tower1 && (*it)->testIfHit(tower1)) {
+                    hit = true;
+                    goto DELETE_BULLET;
+                }
+                else if ((*it)->testIfHit(base1)) {
+                    hit = true;
+                    goto DELETE_BULLET;
+                }
                 else {
                     for (auto t: playerTeam1) {
                         if ((*it)->testIfHit(t)) {
-                            break;
+                            hit = true;
+                            goto DELETE_BULLET;
                         }
                     }
                 }
             }
-            
             DELETE_BULLET:
             if (hit) {
                 (*it)->destroy();
+                (*it)->removeFromParentAndCleanup(true);
                 it = bullets.erase(it);
+            } else {
+                ++it;
             }
         }
     }

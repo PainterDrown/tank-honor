@@ -69,7 +69,6 @@ void Bullet::destroy() {
         AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
     SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
-    removeFromParentAndCleanup(true);
 }
 
 void Bullet::fly(const int timer) {
