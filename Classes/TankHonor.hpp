@@ -1,4 +1,4 @@
-﻿#ifndef TANK_HONOR
+#ifndef TANK_HONOR
 #define TANK_HONOR
 
 #pragma execution_character_set("utf-8")
@@ -44,6 +44,7 @@ public:
     void updateHealthValueLabel(Attackable *target);
     Label* createHealthValueLabel();
     void gameOver();                      // 游戏结束
+    void showHelp();
     
     // 键盘事件回调函数
     void onKeyPressed(EventKeyboard::KeyCode code, Event * event);
@@ -51,9 +52,7 @@ public:
     
     void preloadMusic();                  // 预加载音乐
     void loadAnimation();  // 加载动画
-    
-    void replayCallback(Ref *pSender);  // 重玩按钮响应函数
-    void exitCallback(Ref *pSender);    // 退出按钮响应函数
+
 private:
     Size visibleSize;
     

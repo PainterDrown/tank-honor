@@ -341,6 +341,7 @@ void TankHonor::update(float dt) {
     // 计时器
     timer++;
     if (timer == 1) {
+        showHelp();
         wallBeginMove();
     }
     
@@ -735,6 +736,10 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
+    auto label = Label::createWithTTF("GAME OVER!!!", "fonts/fangzhengyunu.ttf", 122.0f);
+    label->setColor(Color3B::RED);
+    label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    addChild(label, 3);
 	removeSchedulers();
 	SimpleAudioEngine::getInstance()->stopBackgroundMusic("sounds/bgm.mp3");
 	SimpleAudioEngine::getInstance()->playEffect("sounds/gameover.mp3", false);
@@ -993,17 +998,6 @@ void TankHonor::removeSchedulers() {
 	unschedule(schedule_selector(TankHonor::AutoTank2));
 }
 
-void TankHonor::replayCallback(Ref * pSender) {
-    
-}
-
-void TankHonor::exitCallback(Ref * pSender) {
-    /*Director::getInstance()->end();
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif*/
-}
-
 void TankHonor::tankFire(Tank* tank) {
     if (tank->getCD() == 0) {
         Bullet *bullet = Bullet::create(tank);
@@ -1044,4 +1038,18 @@ Label* TankHonor::createHealthValueLabel() {
     auto label = Label::createWithTTF("[----------]", "fonts/fangzhengyunu.ttf", 10.0f);
     label->setColor(Color3B::GREEN);
     return label;
+}
+
+void TankHonor::showHelp() {
+    string help1, help2;
+    help1 = "Player 1:\n    WSAD to move\n    J to attack\n    K to switch tank";
+    help2 = "Player 2:\n    ↑↓←→ to move\n    1 to attack\n    2 to switch tank";
+    auto player1help = Label::createWithTTF(help1, "fonts/fangzhengyunu.ttf", 22.0f);
+    player1help->setColor(Color3B::GRAY);
+    player1help->setPosition(Vec2(100, visibleSize.height - 70));
+    addChild(player1help, 1);
+    auto player2help = Label::createWithTTF(help2, "fonts/fangzhengyunu.ttf", 22.0f);
+    player2help->setColor(Color3B::GRAY);
+    player2help->setPosition(Vec2(visibleSize.width - 10, visibleSize.height - 70));
+    addChild(player2help, 1);
 }
