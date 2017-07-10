@@ -35,7 +35,10 @@ Bullet* Bullet::create(Tank *tank) {
 }
 
 bool Bullet::testIfHit(Attackable *target) {
-    if (target->getBoundingBox().containsPoint(getPosition())) {
+    auto t = target->getBoundingBox();
+    auto p = getPosition();
+    auto c = t.containsPoint(p);
+    if (c) {
         int damage = calculateDamage(target);
         target->hurt(damage);
         if (target->getHealthValue() <= 0) {

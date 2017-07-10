@@ -204,17 +204,28 @@ void TankHonor::update(float dt) {
         } else {
             auto pos = (*it)->getPosition();
             bool hit = false;
+            
             // 判断子弹是否撞墙
             if (wall->getBoundingBox().containsPoint(pos)) {
                 hit = true;
+                goto DELETE_BULLET;
             }
             // 判断子弹是否撞到大小龙
-            if ((*it)->testIfHit(big_dragon));
-            else (*it)->testIfHit(small_dragon);
-            
+            else if ((*it)->testIfHit(big_dragon)) {
+                hit = true;
+                goto DELETE_BULLET;
+            }
+            // 判断子弹是否撞到小龙
+            else if(!hit && (*it)->testIfHit(small_dragon)) {
+                hit = true;
+                goto DELETE_BULLET;
+            }
             // 判断子弹是否与塔、基地、地方坦克相撞
-            if ((*it)->getTank()->getIsR()) {
-                if (tower2 && (*it)->testIfHit(tower2));
+            else if ((*it)->getTank()->getIsR()) {
+                if (tower2 && (*it)->testIfHit(tower2)) {
+                    hit = true;
+                    goto DELETE_BULLET;
+                }
                 else if ((*it)->testIfHit(base2));
                 else {
                     for (auto t: playerTeam2) {
@@ -233,6 +244,12 @@ void TankHonor::update(float dt) {
                         }
                     }
                 }
+            }
+            
+            DELETE_BULLET:
+            if (hit) {
+                (*it)->destroy();
+                it = bullets.erase(it);
             }
         }
     }
