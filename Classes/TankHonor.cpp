@@ -671,7 +671,9 @@ void TankHonor::onKeyReleased(EventKeyboard::KeyCode code, Event* event) {
 }
 
 void TankHonor::gameOver() {
-    
+	removeSchedulers();
+	SimpleAudioEngine::getInstance()->stopBackgroundMusic("sounds/bgm.mp3");
+	SimpleAudioEngine::getInstance()->playEffect("sounds/gameover.mp3", false);
 }
 
 void TankHonor::addSchedulers() {
@@ -893,7 +895,10 @@ void TankHonor::changeControl(Tank *&player, vector<Tank*> playerTeam) {
 }
 
 void TankHonor::removeSchedulers() {
-
+	unschedule(schedule_selector(TankHonor::update));
+	unschedule(schedule_selector(TankHonor::moveUpdate));
+	unschedule(schedule_selector(TankHonor::AutoTank1));
+	unschedule(schedule_selector(TankHonor::AutoTank2));
 }
 
 void TankHonor::replayCallback(Ref * pSender) {
