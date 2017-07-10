@@ -19,11 +19,11 @@ Dragon* Dragon::create(const bool isBig) {
 
 void Dragon::initAttributes() {
     if (isBig) {
-        health_value  = 8000;
+        health_value  = health_value_max = 8000;
         attack_value  = 400;
         defense_value = 400;
     } else {
-        health_value  = 4000;
+        health_value  = health_value_max = 4000;
         attack_value  = 200;
         defense_value = 200;
     }

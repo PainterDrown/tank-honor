@@ -20,6 +20,7 @@ bool TankHonor::init() {
 	addSchedulers();  // 添加定时调度器
     
     preloadMusic();  // 预加载音效
+    loadAnimation();
     
     return true;
 }
@@ -119,11 +120,6 @@ void TankHonor::addSprites() {
     small_dragon->setPosition(Vec2(visibleSize.width / 2, 60.0f));
     small_dragon->setContentSize(Size(100.0f, 100.0f));
     addChild(small_dragon);
-    
-    // 添加信息标签
-    // label = Label::createWithTTF("Rotation: ", "fonts/fangzhengyunu.ttf", 22.0f);
-    // label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-    // addChild(label, 3);
 }
 
 void TankHonor::preloadMusic() {
@@ -147,6 +143,28 @@ void TankHonor::addListeners() {
 }
 
 void TankHonor::loadAnimation() {
+    char filename[50];
+    
+    Vector<SpriteFrame*> R_bullet_destroy;
+    Vector<SpriteFrame*> B_bullet_destroy;
+
+    for (int i = 1; i <= 5; ++i) {
+        sprintf(filename, "pictures/R-bullet-destroy-%d.png", i);
+        auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+        auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 300, 300)));
+        R_bullet_destroy.pushBack(frame);
+    }
+    Animation* animation1 = Animation::createWithSpriteFrames(R_bullet_destroy, 0.1f);
+    AnimationCache::getInstance()->addAnimation(animation1, "R-bullet-destroy");
+    
+    for (int i = 1; i <= 5; ++i) {
+        sprintf(filename, "pictures/B-bullet-destroy-%d.png", i);
+        auto image = Director::getInstance()->getTextureCache()->addImage(filename);
+        auto frame = SpriteFrame::createWithTexture(image, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 300, 300)));
+        B_bullet_destroy.pushBack(frame);
+    }
+    Animation* animation2 = Animation::createWithSpriteFrames(B_bullet_destroy, 0.1f);
+    AnimationCache::getInstance()->addAnimation(animation2, "B-bullet-destroy");
     
 }
 

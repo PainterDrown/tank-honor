@@ -18,7 +18,7 @@ Base* Base::create(const bool isR) {
 }
 
 void Base::initAttributes() {
-    health_value  = 2200;
+    health_value  = health_value_max = 2200;
     attack_value  = 0;
     defense_value = 220;
 }

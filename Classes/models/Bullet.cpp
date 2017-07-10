@@ -13,18 +13,18 @@ Bullet* Bullet::create(Tank *tank) {
     // 绑定图片
     string filename;
     if (tank->getIsR())
-        filename = "pictures/R-bullet-";
+        filename = "pictures/R-";
     else
-        filename = "pictures/B-bullet-";
+        filename = "pictures/B-";
     switch (tank->getType()) {
         case TANK_TYPE::ASSASSIN:
-            filename += "assassin.png";
+            filename += "assassin-bullet.png";
             break;
         case TANK_TYPE::FIGHTER:
-            filename += "fighter.png";
+            filename += "fighter-bullet.png";
             break;
         case TANK_TYPE::SHOOTER:
-            filename += "shooter.png";
+            filename += "shooter-bullet.png";
             break;
         default:
             return NULL;
@@ -36,12 +36,14 @@ Bullet* Bullet::create(Tank *tank) {
 
 bool Bullet::testIfHit(Attackable *target) {
     if (target->getBoundingBox().containsPoint(getPosition())) {
-        destroy();
         int damage = calculateDamage(target);
         target->hurt(damage);
         if (target->getHealthValue() <= 0) {
-            
+            tank->setHealthValueMax(tank->getHealthValueMax() + 200);
+            tank->setAttackValue(tank->getAttackValue() + 100);
+            tank->setDefenseValue(tank->getDefenseValue() + 100);
         }
+        destroy();
         return true;
     } else {
         return false;
@@ -54,8 +56,14 @@ int Bullet::calculateDamage(const Attackable *target) const {
 }
 
 void Bullet::destroy() {
-    auto aimation = RepeatForever::create(Animate::create(
-        AnimationCache::getInstance()->getAnimation("bullet-boom")));
+    string animationName;
+    if (tank->getIsR()) {
+        animationName = "R-bullet-destroy";
+    } else {
+        animationName = "B-bullet-destroy";
+    }
+    auto aimation = Animate::create(
+        AnimationCache::getInstance()->getAnimation(animationName));
     runAction(aimation);
     SimpleAudioEngine::getInstance()->playEffect("sounds/fire.mp3", false);
     removeFromParentAndCleanup(true);
