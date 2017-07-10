@@ -196,7 +196,7 @@ void TankHonor::update(float dt) {
         }
     }
     
-    for (auto it = bullets.begin(); it != bullets.end(); ++it) {
+    for (auto it = bullets.begin(); it != bullets.end();) {
         // 检测子弹是否应该消失
         if ((*it)->getTimeToDisappear() == timer) {
             (*it)->removeFromParentAndCleanup(true);
@@ -234,6 +234,7 @@ void TankHonor::update(float dt) {
                     }
                 }
             }
+			++it;
         }
     }
 }
