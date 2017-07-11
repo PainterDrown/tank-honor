@@ -567,6 +567,7 @@ void TankHonor::update(float dt) {
                             base1->setContentSize(Size(0.0f, 0.0f));
                             base1->removeFromParentAndCleanup(true);
                             labels[base1]->removeFromParentAndCleanup(true);
+                            gameOver();
                         });
                         auto seq = Sequence::create(animation, remove, NULL);
                         base1->stopAllActions();
